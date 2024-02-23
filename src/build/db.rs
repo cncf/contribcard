@@ -78,6 +78,33 @@ CREATE TABLE IF NOT EXISTS pull_request (
 );
 ";
 
+/// Get contributions summaries of all contributors.
+pub(crate) const GET_ALL_CONTRIBUTORS_SUMMARIES: &str = "
+SELECT
+	author_login AS contributor,
+	json_object(
+		'id', author_id,
+		'login', author_login,
+		'contributions', count(*),
+		'repositories', list(DISTINCT repository),
+		'years', list(DISTINCT extract('year' from ts)),
+		'first_contribution', (
+			SELECT json_object(
+				'kind', kind,
+				'owner', owner,
+				'repository', repository,
+				'title', title,
+				'ts', extract('epoch' FROM ts)::BIGINT
+			) FROM contribution
+			WHERE author_id = contribution_parent.author_id
+			ORDER BY ts ASC
+			LIMIT 1
+		)
+	) AS summary
+FROM contribution contribution_parent
+GROUP BY author_id, author_login;
+";
+
 /// Get the id and login of all contributors.
 pub(crate) const GET_CONTRIBUTORS: &str = "
 WITH contributors AS (
