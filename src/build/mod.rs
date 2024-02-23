@@ -18,6 +18,9 @@ mod db;
 mod github;
 mod settings;
 
+/// Path where the data files will be written to in the output directory.
+const DATA_PATH: &str = "data";
+
 /// Embed web application assets into binary.
 /// (these assets will be built automatically from the build script)
 #[derive(RustEmbed)]
@@ -39,6 +42,9 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     // Collect contributions from GitHub
     collect_contributions(&settings.repositories, &cache_db_file).await?;
     let contribs_db = prepare_contributions_table(&cache_db_file)?;
+
+    // Generate contributors data files
+    generate_contributors_data_files(&args.output_dir, &contribs_db)?;
 
     // Render index file and write it to the output directory
     render_index(&args.output_dir, &contribs_db)?;
@@ -106,6 +112,30 @@ fn copy_web_assets(output_dir: &Path) -> Result<()> {
     Ok(())
 }
 
+/// Generate contributors data files.
+#[instrument(skip_all, err)]
+fn generate_contributors_data_files(output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
+    debug!("generating contributors data files");
+
+    // Get all contributors summaries from database
+    let mut stmt = contribs_db.prepare(db::GET_ALL_CONTRIBUTORS_SUMMARIES)?;
+    let rows = stmt.query_map([], |row| {
+        let user: String = row.get(0)?;
+        let summary: String = row.get(1)?;
+        Ok((user, summary))
+    })?;
+
+    // Write each of them to a file
+    let data_path = output_dir.join(DATA_PATH);
+    for row in rows {
+        let Ok((user, summary)) = row else { continue };
+        let mut file = File::create(data_path.join(format!("{user}.json")))?;
+        file.write_all(summary.as_bytes())?;
+    }
+
+    Ok(())
+}
+
 /// Prepare contributions table from all the commits, issues and pull requests
 /// collected from GitHub available in the cache database.
 #[instrument(err)]
@@ -117,7 +147,6 @@ fn prepare_contributions_table(cache_db_file: &str) -> Result<duckdb::Connection
     contribs_db.execute(db::CREATE_CONTRIBUTION_TABLE, [])?;
     contribs_db.execute_batch(db::LOAD_CONTRIBUTIONS_FROM_CACHE)?;
 
-    debug!("done!");
     Ok(contribs_db)
 }
 
@@ -129,7 +158,7 @@ struct Index {
 }
 
 /// Render index file and write it to the output directory.
-#[instrument(skip(contribs_db), err)]
+#[instrument(skip_all, err)]
 fn render_index(output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
     debug!("rendering index.html file");
 
@@ -189,6 +218,11 @@ fn setup_output_dir(output_dir: &Path) -> Result<()> {
     if !output_dir.exists() {
         debug!("creating output directory");
         fs::create_dir_all(output_dir)?;
+    }
+
+    let data_path = output_dir.join(DATA_PATH);
+    if !data_path.exists() {
+        fs::create_dir(data_path)?;
     }
 
     Ok(())
