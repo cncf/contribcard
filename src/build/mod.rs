@@ -2,9 +2,12 @@
 
 use crate::{build::settings::Settings, BuildArgs};
 use anyhow::{format_err, Result};
+use askama::Template;
 use futures::stream::{self, StreamExt};
 use std::{
-    env, fs,
+    env,
+    fs::{self, File},
+    io::Write,
     path::{Path, PathBuf},
     time::Instant,
 };
@@ -28,7 +31,10 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
 
     // Collect contributions from GitHub
     collect_contributions(&settings.repositories, &cache_db_file).await?;
-    let _contribs_db = prepare_contributions_table(&cache_db_file)?;
+    let contribs_db = prepare_contributions_table(&cache_db_file)?;
+
+    // Render index file and write it to the output directory
+    render_index(&args.output_dir, &contribs_db)?;
 
     let duration = start.elapsed().as_secs_f64();
     info!("contributors cards website built! (took: {:.3}s)", duration);
@@ -79,6 +85,28 @@ fn prepare_contributions_table(cache_db_file: &str) -> Result<duckdb::Connection
 
     debug!("done!");
     Ok(contribs_db)
+}
+
+/// Template for the index document.
+#[derive(Debug, Clone, Template)]
+#[template(path = "index.html", escape = "none")]
+struct Index {
+    contributors: String,
+}
+
+/// Render index file and write it to the output directory.
+#[instrument(skip(contribs_db), err)]
+fn render_index(output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
+    debug!("rendering index.html file");
+
+    // Get contributors from cache database
+    let contributors: String = contribs_db.query_row(db::GET_CONTRIBUTORS, [], |row| row.get(0))?;
+
+    // Prepare index, render it and write it to output dir
+    let index = Index { contributors }.render()?;
+    File::create(output_dir.join("index.html"))?.write_all(index.as_bytes())?;
+
+    Ok(())
 }
 
 /// Setup cache database.
