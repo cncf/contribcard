@@ -4,6 +4,7 @@ use crate::{build::settings::Settings, BuildArgs};
 use anyhow::{format_err, Result};
 use askama::Template;
 use futures::stream::{self, StreamExt};
+use rust_embed::RustEmbed;
 use std::{
     env,
     fs::{self, File},
@@ -16,6 +17,12 @@ use tracing::{debug, info, instrument};
 mod db;
 mod github;
 mod settings;
+
+/// Embed web application assets into binary.
+/// (these assets will be built automatically from the build script)
+#[derive(RustEmbed)]
+#[folder = "web/dist"]
+struct WebAssets;
 
 /// Build contributors cards website.
 #[instrument(skip_all)]
@@ -35,6 +42,9 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
 
     // Render index file and write it to the output directory
     render_index(&args.output_dir, &contribs_db)?;
+
+    // Copy web assets files to the output directory
+    copy_web_assets(&args.output_dir)?;
 
     let duration = start.elapsed().as_secs_f64();
     info!("contributors cards website built! (took: {:.3}s)", duration);
@@ -69,6 +79,30 @@ async fn collect_contributions(repositories: &Vec<String>, cache_db_file: &Strin
     }
 
     debug!("done!");
+    Ok(())
+}
+
+/// Copy web assets files to the output directory.
+#[instrument(err)]
+fn copy_web_assets(output_dir: &Path) -> Result<()> {
+    debug!("copying web assets to output directory");
+
+    for asset_path in WebAssets::iter() {
+        // The index document is a template that we'll render, so we don't want
+        // to copy it as is.
+        if asset_path == "index.html" || asset_path == ".keep" {
+            continue;
+        }
+
+        if let Some(embedded_file) = WebAssets::get(&asset_path) {
+            if let Some(parent_path) = Path::new(asset_path.as_ref()).parent() {
+                fs::create_dir_all(output_dir.join(parent_path))?;
+            }
+            let mut file = File::create(output_dir.join(asset_path.as_ref()))?;
+            file.write_all(&embedded_file.data)?;
+        }
+    }
+
     Ok(())
 }
 
