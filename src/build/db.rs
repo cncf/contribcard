@@ -1,5 +1,26 @@
 //! This modules defines SQL statements to setup and interact with the database.
 
+/// Copy commits from the temporary database to the cache database.
+pub(crate) const COPY_COMMITS_TO_CACHE: &str = "
+INSERT INTO cache.commit
+SELECT * FROM commit
+ON CONFLICT DO NOTHING
+";
+
+/// Copy issues from the temporary database to the cache database.
+pub(crate) const COPY_ISSUES_TO_CACHE: &str = "
+INSERT INTO cache.issue
+SELECT * FROM issue
+ON CONFLICT DO NOTHING
+";
+
+/// Copy pull requests from the temporary database to the cache database.
+pub(crate) const COPY_PULL_REQUESTS_TO_CACHE: &str = "
+INSERT INTO cache.pull_request
+SELECT * FROM pull_request
+ON CONFLICT DO NOTHING
+";
+
 /// Create commit table.
 pub(crate) const CREATE_COMMIT_TABLE: &str = "
 CREATE TABLE IF NOT EXISTS commit (
@@ -11,6 +32,21 @@ CREATE TABLE IF NOT EXISTS commit (
     ts TIMESTAMP,
     title VARCHAR,
     PRIMARY KEY (owner, repository, sha)
+);
+";
+
+/// Create contribution table.
+pub(crate) const CREATE_CONTRIBUTION_TABLE: &str = "
+CREATE TABLE IF NOT EXISTS contribution (
+    kind VARCHAR,
+    owner VARCHAR,
+    repository VARCHAR,
+    sha VARCHAR,
+    number BIGINT,
+    author_id BIGINT,
+    author_login VARCHAR,
+    ts TIMESTAMP,
+    title VARCHAR
 );
 ";
 
@@ -42,44 +78,18 @@ CREATE TABLE IF NOT EXISTS pull_request (
 );
 ";
 
-/// Create contribution table.
-pub(crate) const CREATE_CONTRIBUTION_TABLE: &str = "
-CREATE TABLE IF NOT EXISTS contribution (
-    kind VARCHAR,
-    owner VARCHAR,
-    repository VARCHAR,
-    sha VARCHAR,
-    number BIGINT,
-    author_id BIGINT,
-    author_login VARCHAR,
-    ts TIMESTAMP,
-    title VARCHAR
-);
-";
-
-/// Copy commits from the temporary database to the cache database.
-pub(crate) const COPY_COMMITS_TO_CACHE: &str = "
-INSERT INTO cache.commit
-SELECT * FROM commit
-ON CONFLICT DO NOTHING
-";
-
-/// Copy issues from the temporary database to the cache database.
-pub(crate) const COPY_ISSUES_TO_CACHE: &str = "
-INSERT INTO cache.issue
-SELECT * FROM issue
-ON CONFLICT DO NOTHING
-";
-
-/// Copy pull requests from the temporary database to the cache database.
-pub(crate) const COPY_PULL_REQUESTS_TO_CACHE: &str = "
-INSERT INTO cache.pull_request
-SELECT * FROM pull_request
-ON CONFLICT DO NOTHING
+/// Get the id and login of all contributors.
+pub(crate) const GET_CONTRIBUTORS: &str = "
+WITH contributors AS (
+	SELECT DISTINCT author_id AS id, author_login AS login
+	FROM contribution
+)
+SELECT json_group_array(json_object(login, id))
+FROM contributors
 ";
 
 /// Get last commit timestamp.
-pub(crate) const LAST_COMMIT_TS: &str = "
+pub(crate) const GET_LAST_COMMIT_TS: &str = "
 SELECT ts
 FROM commit
 WHERE owner = ?
@@ -89,7 +99,7 @@ LIMIT 1
 ";
 
 /// Get last issue or pull request timestamp (we'll pick the older).
-pub(crate) const LAST_ISSUE_OR_PULL_REQUEST_TS: &str = "
+pub(crate) const GET_LAST_ISSUE_OR_PULL_REQUEST_TS: &str = "
 (
 	SELECT ts
 	FROM issue
@@ -127,63 +137,33 @@ WHERE author.login IS NOT NULL
 ON CONFLICT DO NOTHING;
 ";
 
-/// Load issues from json file.
-pub(crate) const LOAD_ISSUES_FROM_JSON_FILE: &str = r"
-INSERT INTO issue
-SELECT
-    ? AS owner,
-    ? AS repository,
-    number,
-    user.id as author_id,
-    user.login as author_login,
-	created_at as ts,
-    title
-FROM read_json(?)
-WHERE regexp_matches(html_url, '.*/issues/\d+$')
-ON CONFLICT DO NOTHING;
-";
-
-/// Load pull requests from json file.
-pub(crate) const LOAD_PULL_REQUESTS_FROM_JSON_FILE: &str = r"
-INSERT INTO pull_request
-SELECT
-    ? AS owner,
-    ? AS repository,
-    number,
-    user.id as author_id,
-    user.login as author_login,
-	created_at as ts,
-    title
-FROM read_json(?)
-WHERE regexp_matches(html_url, '.*/pull/\d+$')
-ON CONFLICT DO NOTHING;
-";
-
 /// Load contributions from commits, issues and pull requests in the cache db.
 pub(crate) const LOAD_CONTRIBUTIONS_FROM_CACHE: &str = "
 BEGIN;
 
-INSERT INTO contribution (
-    kind,
-    owner,
-    repository,
-    sha,
-    author_id,
-    author_login,
-    ts,
-    title
-)
-SELECT
-    'commit',
-    owner,
-    repository,
-    sha,
-    author_id,
-    author_login,
-    ts,
-    title
-FROM cache.commit
-WHERE title NOT LIKE 'Merge pull request%';
+-- NOTE: not using commits for now until we de-duplicate commits/prs reliably
+--
+-- INSERT INTO contribution (
+--     kind,
+--     owner,
+--     repository,
+--     sha,
+--     author_id,
+--     author_login,
+--     ts,
+--     title
+-- )
+-- SELECT
+--     'commit',
+--     owner,
+--     repository,
+--     sha,
+--     author_id,
+--     author_login,
+--     ts,
+--     title
+-- FROM cache.commit
+-- WHERE title NOT LIKE 'Merge pull request%';
 
 INSERT INTO contribution (
     kind,
@@ -228,4 +208,36 @@ SELECT
 FROM cache.pull_request;
 
 COMMIT;
+";
+
+/// Load issues from json file.
+pub(crate) const LOAD_ISSUES_FROM_JSON_FILE: &str = r"
+INSERT INTO issue
+SELECT
+    ? AS owner,
+    ? AS repository,
+    number,
+    user.id as author_id,
+    user.login as author_login,
+	created_at as ts,
+    title
+FROM read_json(?)
+WHERE regexp_matches(html_url, '.*/issues/\d+$')
+ON CONFLICT DO NOTHING;
+";
+
+/// Load pull requests from json file.
+pub(crate) const LOAD_PULL_REQUESTS_FROM_JSON_FILE: &str = r"
+INSERT INTO pull_request
+SELECT
+    ? AS owner,
+    ? AS repository,
+    number,
+    user.id as author_id,
+    user.login as author_login,
+	created_at as ts,
+    title
+FROM read_json(?)
+WHERE regexp_matches(html_url, '.*/pull/\d+$')
+ON CONFLICT DO NOTHING;
 ";

@@ -71,7 +71,7 @@ impl Collector {
 
         // Build first page url
         let mut url = format!("{API_BASE_URL}/repos/{owner}/{repo}/commits?per_page=100");
-        if let Some(ts) = self.last_timestamp(db::LAST_COMMIT_TS, &[&owner, &repo])? {
+        if let Some(ts) = self.last_timestamp(db::GET_LAST_COMMIT_TS, &[&owner, &repo])? {
             url.push_str(&format!("&since={ts}"));
         }
 
@@ -121,7 +121,7 @@ impl Collector {
 
         // Build first page url
         let mut url = format!("{API_BASE_URL}/repos/{owner}/{repo}/issues?state=all&per_page=100");
-        if let Some(ts) = self.last_timestamp(db::LAST_ISSUE_OR_PULL_REQUEST_TS, &[&owner, &repo])? {
+        if let Some(ts) = self.last_timestamp(db::GET_LAST_ISSUE_OR_PULL_REQUEST_TS, &[&owner, &repo])? {
             url.push_str(&format!("&since={ts}"));
         }
 
