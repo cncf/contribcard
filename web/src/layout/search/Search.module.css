@@ -1,0 +1,116 @@
+.searchTitle {
+  color: var(--mid-gray);
+  font-weight: 600;
+  text-align: center;
+}
+
+.searchBar {
+  margin: 0 0.2rem;
+  height: 50px;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.15);
+}
+
+.input {
+  background-color: transparent;
+  border: none;
+  font-size: 1.25rem;
+}
+
+.searchIcon {
+  color: var(--mid-gray);
+  padding: 0.375rem 0.75rem;
+}
+
+.dropdown {
+  position: absolute;
+  padding: 0.5rem 0;
+  margin: 0;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  max-height: 275px;
+  overflow-y: auto;
+}
+
+.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:global(.activeDropdownItem) {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+.item:not(:last-child) {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.miniAvatar {
+  width: 40px;
+  height: 40px;
+}
+
+.displayName {
+  font-size: 1.35rem;
+  line-height: 2;
+}
+
+.emptyMessage {
+  font-style: italic;
+  text-align: center;
+}
+
+.searchValue {
+  font-weight: 600;
+  color: var(--mid-gray);
+}
+
+.loading {
+  top: calc(50% - 8px);
+  right: 1rem;
+}
+
+@media (hover: hover) {
+  .btn:hover {
+    background-color: rgba(0, 0, 0, 0.015);
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .searchWrapper {
+    min-height: 474px;
+  }
+
+  .searchTitle {
+    font-size: 2rem;
+  }
+
+  .input {
+    font-size: 1.5rem;
+  }
+
+  .displayName {
+    font-size: 1.75rem;
+  }
+
+  .dropdown {
+    max-height: 370px;
+  }
+
+  .miniAvatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .spinner {
+    width: 2rem;
+    height: 2rem;
+    border-width: 0.25em;
+  }
+
+  .loading {
+    top: calc(50% - 16px);
+  }
+}

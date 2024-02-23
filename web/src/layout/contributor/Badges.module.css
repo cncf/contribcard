@@ -1,0 +1,44 @@
+.wrapper {
+  min-width: 0;
+  max-height: 28px;
+  padding-right: 25px;
+  overflow: hidden;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  margin-bottom: 0.8px;
+  line-height: 0.7rem;
+  color: var(--mid-gray);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border: 1px solid rgba(0,0,0,0.25);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.hiddenItems {
+  position: absolute;
+  top: 0.1rem;
+  font-weight: bold;
+  color: var(--mid-gray);
+  font-size: 0.75rem;
+}
+
+@media screen and (min-width: 768px) {
+  .wrapper {
+    max-height: 35px;
+  }
+
+  .badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  .hiddenItems {
+    font-size: 1rem;
+  }
+}
