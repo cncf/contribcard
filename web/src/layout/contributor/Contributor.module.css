@@ -1,0 +1,153 @@
+.title {
+  color: var(--mid-gray);
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.35rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+.subtitle span {
+  font-size: 1.3rem;
+  color: var(--mid-gray);
+}
+
+.contributorInfo {
+  min-width: 0;
+  width: calc(100% - 66px);
+}
+
+.card {
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0,0,0,0.25);
+  font-size: 0.8rem;
+  padding: 0.75rem;
+}
+
+.contribIcon {
+  margin-top: -1px;
+}
+
+.clotributorWrapper {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  width: 90%;
+}
+
+.legend {
+  font-size: 1.15rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+.clotributorLink {
+  color: #0d6efd;
+  text-decoration: underline;
+}
+
+.displayName {
+  display: block;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.githubLink {
+  display: block;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.generalTitle {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.message {
+  font-size: 1.15rem;
+  text-align: center;
+}
+
+.loadingWrapper {
+  padding: 5rem;
+  text-align: center;
+}
+
+.firstContribContent {
+  min-width: 0;
+  line-height: 1;
+}
+
+.firstContributionRepo {
+  display: block;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.firstContributionLink {
+  display: block;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .clotributorLink:hover {
+    color: #0d6efd;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .noContributor {
+    min-height: 602px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .legend {
+    font-size: 1.5rem;
+  }
+
+  .clotributorWrapper {
+    width: 75%;
+  }
+
+  .subtitle {
+    font-size: 1.8rem;
+  }
+
+  .subtitle span {
+    font-size: 2.25rem;
+  }
+
+  .displayName {
+    font-size: 1.75rem;
+  }
+
+  .githubLink {
+    font-size: 1.35rem;
+  }
+
+  .card {
+    font-size: 1rem;
+    padding: 0.9rem;
+  }
+
+  .message {
+    font-size: 1.75rem;
+  }
+
+  .generalTitle {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .firstContribContent {
+    line-height: 1.5;
+  }
+}

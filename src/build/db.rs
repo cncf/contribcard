@@ -93,6 +93,7 @@ SELECT
 				'kind', kind,
 				'owner', owner,
 				'repository', repository,
+                'number', number,
 				'title', title,
 				'ts', extract('epoch' FROM ts)::BIGINT
 			) FROM contribution

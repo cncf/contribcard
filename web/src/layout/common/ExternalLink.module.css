@@ -1,0 +1,10 @@
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .link:hover {
+    color: inherit;
+  }
+}
