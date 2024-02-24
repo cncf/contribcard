@@ -1,2 +1,2 @@
 [general]
-dirs = ["templates", "web/dist"]
+dirs = ["web/dist"]
