@@ -27,10 +27,10 @@ const DATA_PATH: &str = "data";
 #[folder = "web/dist"]
 struct WebAssets;
 
-/// Build contributors cards website.
+/// Build contribcard website.
 #[instrument(skip_all)]
 pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
-    info!("building contributors cards website..");
+    info!("building contribcard website..");
     let start = Instant::now();
 
     // Initial setup
@@ -53,7 +53,7 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     copy_web_assets(&args.output_dir)?;
 
     let duration = start.elapsed().as_secs_f64();
-    info!("contributors cards website built! (took: {:.3}s)", duration);
+    info!("contribcard website built! (took: {:.3}s)", duration);
     Ok(())
 }
 
