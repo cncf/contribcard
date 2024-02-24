@@ -8,7 +8,7 @@ use tokio::{net::TcpListener, signal};
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::{info, instrument};
 
-/// Serve contributors cards website.
+/// Serve contribcard website.
 #[instrument(skip_all)]
 pub(crate) async fn serve(args: &ServeArgs) -> Result<()> {
     // Setup router

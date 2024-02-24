@@ -4,10 +4,12 @@
 use anyhow::Result;
 use build::build;
 use clap::{Args, Parser, Subcommand};
+use deploy::s3;
 use serve::serve;
 use std::path::PathBuf;
 
 mod build;
+mod deploy;
 mod serve;
 
 /// CLI arguments.
@@ -26,10 +28,13 @@ struct Cli {
 /// Commands available.
 #[derive(Subcommand)]
 enum Command {
-    /// Build contributors cards website.
+    /// Build contribcard website.
     Build(BuildArgs),
 
-    /// Serve contributors cards website.
+    /// Deploy contribcard website (experimental).
+    Deploy(DeployArgs),
+
+    /// Serve contribcard website.
     Serve(ServeArgs),
 }
 
@@ -40,7 +45,7 @@ struct BuildArgs {
     #[arg(long)]
     cache_dir: Option<PathBuf>,
 
-    /// Name of the contributors cards website (i.e. kubernetes).
+    /// Name of the contribcard website (i.e. kubernetes).
     #[arg(long)]
     name: String,
 
@@ -51,6 +56,34 @@ struct BuildArgs {
     /// Contribcard settings file.
     #[arg(long)]
     settings_file: PathBuf,
+}
+
+/// Deploy command arguments.
+#[derive(Args)]
+#[command(args_conflicts_with_subcommands = true)]
+struct DeployArgs {
+    /// Provider used to deploy the contribcard website.
+    #[command(subcommand)]
+    provider: Provider,
+}
+
+/// Provider used to deploy the contribcard website.
+#[derive(Subcommand)]
+enum Provider {
+    /// Deploy contribcard website to AWS S3.
+    S3(S3Args),
+}
+
+/// AWS S3 provider arguments.
+#[derive(Args)]
+struct S3Args {
+    /// Bucket to copy the contribcard website files to.
+    #[arg(long)]
+    bucket: String,
+
+    /// Location of the contribcard website files (build subcommand output).
+    #[arg(long)]
+    content_dir: PathBuf,
 }
 
 /// Serve command arguments.
@@ -64,7 +97,7 @@ struct ServeArgs {
     #[arg(long, default_value_t = false)]
     graceful_shutdown: bool,
 
-    /// Location of the contributors cards website files.
+    /// Location of the contribcard website files.
     /// The current path will be used when none is provided.
     #[arg(long)]
     content_dir: Option<PathBuf>,
@@ -83,6 +116,11 @@ async fn main() -> Result<()> {
     // Run command
     match &cli.command {
         Command::Build(args) => build(args).await?,
+        Command::Deploy(args) => {
+            match &args.provider {
+                Provider::S3(args) => s3::deploy(args).await?,
+            };
+        }
         Command::Serve(args) => serve(args).await?,
     }
 
