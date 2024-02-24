@@ -14,7 +14,7 @@ function useSelectedContributorProvider() {
     try {
       const data = await API.getContributorInfo(contributorId()!);
       setInfo(data);
-      const url = `/contributor/${contributorId()}`;
+      const url = `/${contributorId()}`;
       if (location.pathname !== url) {
         navigate(url, {
           replace: false,

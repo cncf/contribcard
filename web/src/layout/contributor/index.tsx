@@ -62,6 +62,26 @@ const ContributorCard = () => {
   const setContributorId = useSetSelectedContributorId();
   const contributor = useSelectedContributorInfoContent();
 
+  const getFirstContributionLink = () => {
+    let url = `https://github.com/${contributor()!.first_contribution.owner}/${
+      contributor()!.first_contribution.repository
+    }/`;
+
+    switch (contributor()!.first_contribution.kind) {
+      case ContributionKind.COMMIT:
+        url += `commit/${contributor()!.first_contribution.sha}`;
+        break;
+      case ContributionKind.ISSUE:
+        url += `issues/${contributor()!.first_contribution.number}`;
+        break;
+      case ContributionKind.PR:
+        url += `pull/${contributor()!.first_contribution.number}`;
+        break;
+    }
+
+    return url;
+  };
+
   onMount(() => {
     if (contributorId() === undefined) {
       setContributorId(params.id);
@@ -91,13 +111,13 @@ const ContributorCard = () => {
 
             <div class={`fs-4 mb-4 pb-4 text-muted ${styles.legend}`}>
               But you can find lots of opportunities to contribute at{' '}
-              <ExternalLink href="https://clotributor.dev" class={styles.clotributorLink}>
+              <ExternalLink href="https://clotributor.dev" class={styles.clotributorLink} underlined>
                 clotributor.dev
               </ExternalLink>
               !
             </div>
 
-            <ExternalLink href="https://clotributor.dev">
+            <ExternalLink href="https://clotributor.dev" underlined={false}>
               <div class={`mx-auto mt-4 mb-3 mb-md-5 ${styles.clotributorWrapper}`}>
                 <img class="w-100" src={clotributor} alt="Clotributor" />
               </div>
@@ -118,6 +138,7 @@ const ContributorCard = () => {
               <ExternalLink
                 href={`https://github.com/${contributor()!.login}`}
                 class={`fw-semibold text-truncate ${styles.displayName}`}
+                underlined
               >
                 {contributor()!.login}
               </ExternalLink>
@@ -126,6 +147,7 @@ const ContributorCard = () => {
               <ExternalLink
                 href={`https://github.com/${contributor()!.login}`}
                 class={`text-muted text-truncate ${styles.githubLink}`}
+                underlined
               >
                 https://github.com/{contributor()!.login}
               </ExternalLink>
@@ -144,36 +166,24 @@ const ContributorCard = () => {
 
         <div class="mt-4">
           <div class={`text-muted text-uppercase ${styles.generalTitle}`}>First contribution</div>
-          <div class={`mt-2 ${styles.card}`}>
+          <ExternalLink class={`mt-2 ${styles.card}`} href={getFirstContributionLink()} underlined={false}>
             <div class="d-flex flex-row align-items-top">
               <div class={`pe-2 text-muted ${styles.contribIcon}`}>
                 <ContributionKindIcon kind={contributor()!.first_contribution.kind} />
               </div>
               <div class={`d-flex flex-column ${styles.firstContribContent}`}>
-                <ExternalLink
-                  href={`https://github.com/${contributor()!.first_contribution.owner}/${
-                    contributor()!.first_contribution.repository
-                  }`}
-                  class={`fw-bold text-truncate w-100 ${styles.firstContributionRepo}`}
-                >
+                <div class={`fw-bold text-truncate w-100 ${styles.firstContributionRepo}`}>
                   {contributor()!.first_contribution.owner}/{contributor()!.first_contribution.repository}
-                </ExternalLink>
-                <ExternalLink
-                  href={`https://github.com/${contributor()!.first_contribution.owner}/${
-                    contributor()!.first_contribution.repository
-                  }/${contributor()!.first_contribution.kind === ContributionKind.ISSUE ? 'issues' : 'pull'}/${
-                    contributor()!.first_contribution.number
-                  }`}
-                  class={`fw-semibold my-1 text-truncate w-100 ${styles.firstContributionLink}`}
-                >
+                </div>
+                <div class={`fw-semibold my-1 text-truncate w-100 ${styles.firstContributionLink}`}>
                   {contributor()!.first_contribution.title}
-                </ExternalLink>
+                </div>
                 <div class="text-muted">
                   <small>{formatDate(contributor()!.first_contribution.ts)}</small>
                 </div>
               </div>
             </div>
-          </div>
+          </ExternalLink>
 
           <div class="mt-4">
             <div class={`text-muted text-uppercase ${styles.generalTitle}`}>

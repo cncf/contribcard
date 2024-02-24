@@ -8,6 +8,7 @@ interface Props {
   class?: string;
   label?: string;
   title?: string;
+  underlined: boolean;
 }
 
 const ExternalLink = (props: Props) => {
@@ -15,6 +16,7 @@ const ExternalLink = (props: Props) => {
     <a
       title={props.title}
       class={`${styles.link} ${props.class}`}
+      classList={{ [styles.highlighted]: props.underlined }}
       href={props.href}
       target="_blank"
       rel="noopener noreferrer"

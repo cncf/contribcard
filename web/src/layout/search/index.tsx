@@ -1,30 +1,33 @@
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from 'solid-js';
 
-import { useContributorsDataContent } from '../../stores/contributorsData';
+import { useContributorsDataInfo, useContributorsDataList } from '../../stores/contributorsData';
 import { useSelectedContributorId, useSetSelectedContributorId } from '../../stores/selectedContributor';
-import { ContributorBase } from '../../types';
 import HoverableItem from '../common/HoverableItem';
 import styles from './Search.module.css';
 
-const SEARCH_DELAY = 3 * 100; // 300ms
+const SEARCH_DELAY = 2 * 100; // 200ms
 const MIN_CHARACTERS_SEARCH = 3;
+const MAX_CONTRIBUTORS = 10;
 
 const Search = () => {
-  const currentContributors = useContributorsDataContent();
+  const currentContributors = useContributorsDataList();
+  const contributorsInfo = useContributorsDataInfo();
   const selectedContributorId = useSelectedContributorId();
   const setContributorId = useSetSelectedContributorId();
   const [inputEl, setInputEl] = createSignal<HTMLInputElement>();
   const [dropdownRef, setDropdownRef] = createSignal<HTMLInputElement>();
   const [value, setValue] = createSignal<string>('');
-  const [visibleContributors, setVisibleContributors] = createSignal<ContributorBase[] | null>(null);
+  const [visibleContributors, setVisibleContributors] = createSignal<string[] | null>(null);
   const [visibleDropdown, setVisibleDropdown] = createSignal<boolean>(false);
   const [highlightedContributor, setHighlightedContributor] = createSignal<number | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = createSignal<number | null>(null);
+  const [searchingResults, setSearchingResults] = createSignal<boolean>(false);
 
   const onKeyDown = (e: KeyboardEvent): void => {
     switch (e.key) {
       case 'Escape':
         cleanItemsSearch();
+        setValue('');
         return;
       case 'ArrowDown':
         updateHighlightedItem('down');
@@ -34,10 +37,19 @@ const Search = () => {
         return;
       case 'Enter':
         e.preventDefault();
-        if (value() !== '') {
-          cleanTimeout();
-          cleanItemsSearch();
-          setContributorId(value());
+        if (visibleContributors() !== null && highlightedContributor() !== null) {
+          const selectedContributor = visibleContributors()![highlightedContributor()!];
+          if (selectedContributor) {
+            setContributorId(selectedContributor);
+            cleanItemsSearch();
+            setValue('');
+          }
+        } else {
+          if (value() !== '') {
+            setContributorId(value());
+            cleanItemsSearch();
+            setValue('');
+          }
         }
         return;
       default:
@@ -47,8 +59,10 @@ const Search = () => {
 
   const onSearch = (text: string) => {
     const lowerText = text.toLowerCase();
-    const filteredContributors = currentContributors()!.filter((c: ContributorBase) => {
-      if (c.login.toLowerCase().startsWith(lowerText)) {
+    let counter = 0;
+    const filteredContributors = currentContributors()!.filter((c: string) => {
+      if (counter < MAX_CONTRIBUTORS && c.toLowerCase().startsWith(lowerText)) {
+        counter++;
         return c;
       }
     });
@@ -65,6 +79,7 @@ const Search = () => {
       setVisibleContributors([]);
       setVisibleDropdown(true);
     }
+    setSearchingResults(false);
   };
 
   const cleanTimeout = () => {
@@ -73,11 +88,6 @@ const Search = () => {
       setDropdownTimeout(null);
     }
   };
-
-  // const cleanSearchValue = () => {
-  //   setValue('');
-  //   forceFocus();
-  // };
 
   const cleanItemsSearch = () => {
     setVisibleContributors(null);
@@ -119,6 +129,7 @@ const Search = () => {
       const isInputFocused = inputEl() === document.activeElement;
       if (isInputFocused) {
         if (value().length >= MIN_CHARACTERS_SEARCH) {
+          setSearchingResults(true);
           cleanTimeout();
           setDropdownTimeout(
             setTimeout(() => {
@@ -163,20 +174,31 @@ const Search = () => {
             onInput={(e) => setValue(e.target.value)}
           />
           <div class={styles.searchIcon}>
-            <svg
-              stroke="currentColor"
-              fill="none"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              height="1em"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
+            <Show
+              when={!searchingResults()}
+              fallback={
+                <div class={`position-absolute ${styles.searchingWrapper}`}>
+                  <div class={`spinner-border ${styles.searchingSpinner}`} role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              }
             >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+              <svg
+                stroke="currentColor"
+                fill="none"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                height="1em"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </Show>
           </div>
         </div>
         <Show when={visibleDropdown() && visibleContributors() !== null}>
@@ -207,19 +229,23 @@ const Search = () => {
                         classList={{
                           activeDropdownItem: index() === highlightedContributor(),
                         }}
-                        onClick={() => setContributorId(c.login)}
+                        onClick={() => {
+                          setContributorId(c);
+                          cleanItemsSearch();
+                          setValue('');
+                        }}
                       >
                         <div class="d-flex flex-row align-items-center">
                           <div class={`me-4 avatar ${styles.miniAvatar}`}>
                             <img
                               class="d-block w-100 h-100 mask"
-                              src={`https://avatars.githubusercontent.com/u/${c.id}`}
-                              alt="Avatar"
+                              src={`https://avatars.githubusercontent.com/u/${contributorsInfo()![c]}`}
+                              alt={`${c} avatar`}
                             />
                           </div>
-                          <div class={`fw-semibold text-truncate ${styles.displayName}`}>{c.login}</div>
+                          <div class={`fw-semibold text-truncate ${styles.displayName}`}>{c}</div>
                         </div>
-                        <Show when={selectedContributorId() === c.login}>
+                        <Show when={selectedContributorId() === c}>
                           <div class={`position-absolute ${styles.loading}`}>
                             <div class={`spinner-border spinner-border-sm ${styles.spinner}`} role="status">
                               <span class="visually-hidden">Loading...</span>

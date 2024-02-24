@@ -1,18 +1,16 @@
-export interface User {
+export interface UserInfo {
   [key: string]: number;
 }
 
-export interface ContributorBase {
+export interface Contributor {
   id: number;
   login: string;
-}
-
-export interface Contributor extends ContributorBase {
   contributions: number;
   years: number[];
   repositories: string[];
   first_contribution: {
-    number: number;
+    number?: number;
+    sha?: string;
     kind: ContributionKind;
     owner: string;
     repository: string;
