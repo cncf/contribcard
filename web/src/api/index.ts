@@ -36,7 +36,9 @@ class API_CLASS {
   }
 
   public getContributorInfo(id: string): Promise<Contributor> {
-    return this.apiFetch(`${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}/` : this.BASE_PATH}/${id}.json`);
+    return this.apiFetch(
+      `${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}/` : this.BASE_PATH}/${id}.json`
+    );
   }
 }
 

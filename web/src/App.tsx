@@ -7,7 +7,7 @@ import Search from './layout/search';
 function App() {
   return (
     <Router root={Layout}>
-      <Route path="/contributor/:id" component={ContributorCard} />
+      <Route path="/:id" component={ContributorCard} />
       <Route path="*" component={Search} />
     </Router>
   );

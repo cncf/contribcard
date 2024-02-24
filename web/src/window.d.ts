@@ -1,7 +1,7 @@
-import { User } from "./types";
+import { UserInfo } from './types';
 
 declare global {
   interface Window {
-    contributors: User[];
+    contributors: UserInfo[];
   }
 }

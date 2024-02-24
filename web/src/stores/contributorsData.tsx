@@ -1,27 +1,27 @@
 import { createContext, createSignal, onMount, ParentComponent, useContext } from 'solid-js';
 
-import { ContributorBase, User } from '../types';
+import { UserInfo } from '../types';
 
 function useContributorsDataProvider() {
-  const [contributors, setContributors] = createSignal<ContributorBase[] | null>();
+  const [contributors, setContributors] = createSignal<string[] | null>();
+  const [contributorsInfo, setContributorsInfo] = createSignal<UserInfo | null>();
 
   onMount(() => {
-    const data: ContributorBase[] = [];
+    const data: UserInfo = {};
 
-    window.contributors.forEach((u: User) => {
+    window.contributors.forEach((u: UserInfo) => {
       Object.keys(u).forEach((c: string) => {
-        data.push({
-          id: u[c],
-          login: c,
-        });
+        data[c] = u[c];
       });
     });
 
-    setContributors(data);
+    setContributors(Object.keys(data).sort(Intl.Collator().compare));
+    setContributorsInfo(data);
   });
 
   return {
     contributors: contributors,
+    contributorsInfo: contributorsInfo,
   };
 }
 
@@ -42,6 +42,10 @@ export function useContributorsData() {
   return context;
 }
 
-export function useContributorsDataContent() {
+export function useContributorsDataList() {
   return useContributorsData().contributors;
+}
+
+export function useContributorsDataInfo() {
+  return useContributorsData().contributorsInfo;
 }
