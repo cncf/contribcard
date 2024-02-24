@@ -5,6 +5,8 @@
   --white: #fff;
   --gray: #303030;
   --mid-gray: #383838;
+  --color-1: #0086FF;
+  --color-2: #80C2FF;
 }
 
 *,
@@ -415,7 +417,7 @@ select:focus {
   left: calc(var(--decorator-border) * -1);
   height: calc(100% + 2 * var(--decorator-border));
   width: calc(100% + 2 * var(--decorator-border));
-  background-color: #0086FF;
+  background-color: var(--color-1);
 }
 
 .decorator::after {
@@ -423,8 +425,7 @@ select:focus {
   position: absolute;
   top: 0;
   bottom: 0;
-  background-color: var(--white);
-  opacity: .5;
+  background-color: var(--color-2);
   width: 218px;
   left: calc(50% - 109px);
 }
@@ -434,8 +435,7 @@ select:focus {
   position: absolute;
   left: 0;
   right: 0;
-  background-color: var(--white);
-  opacity: .5;
+  background-color: var(--color-2);
   height: calc(100% - 2 * 211px);
   top: 211px;
 }
