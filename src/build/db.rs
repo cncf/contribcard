@@ -81,27 +81,35 @@ CREATE TABLE IF NOT EXISTS pull_request (
 /// Get contributions summaries of all contributors.
 pub(crate) const GET_ALL_CONTRIBUTORS_SUMMARIES: &str = "
 SELECT
-	author_login AS contributor,
-	json_object(
-		'id', author_id,
-		'login', author_login,
-		'contributions', count(*),
-		'repositories', list(DISTINCT repository),
-		'years', list(DISTINCT extract('year' from ts)),
-		'first_contribution', (
-			SELECT json_object(
-				'kind', kind,
-				'owner', owner,
-				'repository', repository,
+    author_login AS contributor,
+    json_object(
+        'id', author_id,
+        'login', author_login,
+        'contributions', count(*),
+        'repositories', (
+            SELECT list(repository ORDER BY total DESC)
+            FROM (
+                SELECT DISTINCT repository, count(*) AS total
+                FROM contribution
+                WHERE author_id = contribution_parent.author_id
+                GROUP BY owner, repository
+            )
+        ),
+        'years', list(DISTINCT extract('year' from ts)),
+        'first_contribution', (
+            SELECT json_object(
+                'kind', kind,
+                'owner', owner,
+                'repository', repository,
                 'number', number,
-				'title', title,
-				'ts', extract('epoch' FROM ts)::BIGINT
-			) FROM contribution
-			WHERE author_id = contribution_parent.author_id
-			ORDER BY ts ASC
-			LIMIT 1
-		)
-	) AS summary
+                'title', title,
+                'ts', extract('epoch' FROM ts)::BIGINT
+            ) FROM contribution
+            WHERE author_id = contribution_parent.author_id
+            ORDER BY ts ASC
+            LIMIT 1
+        )
+    ) AS summary
 FROM contribution contribution_parent
 GROUP BY author_id, author_login;
 ";
@@ -109,8 +117,8 @@ GROUP BY author_id, author_login;
 /// Get the id and login of all contributors.
 pub(crate) const GET_CONTRIBUTORS: &str = "
 WITH contributors AS (
-	SELECT DISTINCT author_id AS id, author_login AS login
-	FROM contribution
+    SELECT DISTINCT author_id AS id, author_login AS login
+    FROM contribution
 )
 SELECT json_group_array(json_object(login, id))
 FROM contributors
@@ -129,21 +137,21 @@ LIMIT 1
 /// Get last issue or pull request timestamp (we'll pick the older).
 pub(crate) const GET_LAST_ISSUE_OR_PULL_REQUEST_TS: &str = "
 (
-	SELECT ts
-	FROM issue
-	WHERE owner = $1
-	AND repository = $2
-	ORDER BY ts DESC
-	LIMIT 1
+    SELECT ts
+    FROM issue
+    WHERE owner = $1
+    AND repository = $2
+    ORDER BY ts DESC
+    LIMIT 1
 )
 UNION
 (
-	SELECT ts
-	FROM pull_request
-	WHERE owner = $1
-	AND repository = $2
-	ORDER BY ts DESC
-	LIMIT 1
+    SELECT ts
+    FROM pull_request
+    WHERE owner = $1
+    AND repository = $2
+    ORDER BY ts DESC
+    LIMIT 1
 )
 ORDER BY ts ASC
 LIMIT 1;
@@ -247,7 +255,7 @@ SELECT
     number,
     user.id as author_id,
     user.login as author_login,
-	created_at as ts,
+    created_at as ts,
     title
 FROM read_json(?)
 WHERE regexp_matches(html_url, '.*/issues/\d+$')
@@ -263,7 +271,7 @@ SELECT
     number,
     user.id as author_id,
     user.login as author_login,
-	created_at as ts,
+    created_at as ts,
     title
 FROM read_json(?)
 WHERE regexp_matches(html_url, '.*/pull/\d+$')
