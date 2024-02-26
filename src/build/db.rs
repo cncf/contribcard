@@ -89,9 +89,7 @@ SELECT
             SELECT json_object(
                 'total', count(contribution_parent),
                 'by_kind', (
-                    SELECT json_group_array(json_object(
-                        kind, total
-                    ))
+                    SELECT json_group_object(kind, total)
                     FROM (
                         SELECT kind, count(*) AS total
                         FROM contribution
