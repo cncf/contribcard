@@ -85,7 +85,22 @@ SELECT
     json_object(
         'id', author_id,
         'login', author_login,
-        'contributions', count(*),
+        'contributions', (
+            SELECT json_object(
+                'total', count(contribution_parent),
+                'by_kind', (
+                    SELECT json_group_array(json_object(
+                        kind, total
+                    ))
+                    FROM (
+                        SELECT kind, count(*) AS total
+                        FROM contribution
+                        WHERE author_id = contribution_parent.author_id
+                        GROUP BY kind
+                    )
+                )
+            )
+        ),
         'repositories', (
             SELECT list(repository ORDER BY total DESC)
             FROM (
