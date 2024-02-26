@@ -7,16 +7,8 @@ function useContributorsDataProvider() {
   const [contributorsInfo, setContributorsInfo] = createSignal<UserInfo | null>();
 
   onMount(() => {
-    const data: UserInfo = {};
-
-    window.contributors.forEach((u: UserInfo) => {
-      Object.keys(u).forEach((c: string) => {
-        data[c] = u[c];
-      });
-    });
-
-    setContributors(Object.keys(data).sort(Intl.Collator().compare));
-    setContributorsInfo(data);
+    setContributors(Object.keys(window.contributors).sort(Intl.Collator().compare));
+    setContributorsInfo(window.contributors);
   });
 
   return {

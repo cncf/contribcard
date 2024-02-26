@@ -128,8 +128,16 @@ button:not(:disabled),
   align-items: center !important;
 }
 
+.align-content-between {
+  align-content: space-between !important;
+}
+
 .justify-content-center {
   justify-content: center !important;
+}
+
+.justify-content-between {
+  justify-content: space-between !important;
 }
 
 .flex-wrap {
@@ -338,7 +346,6 @@ button:not(:disabled),
   white-space: nowrap;
 }
 
-
 @-webkit-keyframes spinner-border {
   to {
     transform: rotate(360deg) /* rtl:ignore */;
@@ -394,7 +401,7 @@ select:focus {
 .wrapper {
   max-width: 400px;
   width: calc(100% - 40px);
-  height: 635px;
+  height: 640px;
   max-height: calc(100% - 40px);
 }
 
@@ -450,6 +457,9 @@ select:focus {
 .avatar {
   height: 50px;
   width: 50px;
+  font-size: 1.75rem;
+  line-height: 45px;
+  text-align: center;
   filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.25));
 }
 
@@ -474,31 +484,92 @@ select:focus {
   -webkit-appearance: none;
 }
 
-@media screen and (max-height: 1057.99px) and (min-width: 680px) {
+@media screen and (min-height: 870px) and (min-width: 620px) {
   :root {
-    --decorator-border: 20px;
+    --decorator-border: 15px;
+  }
+
+  .my-md-3 {
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .mx-md-5 {
+    margin-right: 2rem !important;
+    margin-left: 2rem !important;
+  }
+
+  .mt-md-4 {
+    margin-top: 1.25rem !important;
+  }
+
+  .mt-md-5 {
+    margin-top: 2rem !important;
+  }
+
+  .mb-md-4 {
+    margin-bottom: 1.25rem !important;
+  }
+
+  .mb-md-5 {
+    margin-bottom: 2rem !important;
+  }
+
+  .pt-md-3 {
+    padding-top: 0.75rem !important;
+  }
+
+  .pt-md-5 {
+    padding-top: 2rem !important;
+  }
+
+  .p-md-3 {
+    padding: 0.75rem !important;
+  }
+
+  .py-md-2 {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
   }
 
   .wrapper {
     width: 500px;
     max-width: 90%;
-    height: 650px;
+    height: 785px;
     max-height: 90%;
   }
 
+  .header {
+    padding: 1rem;
+  }
+
+  .header-logo {
+    width: 180px;
+    margin: 0.8rem 0;
+  }
+
+  .avatar {
+    height: 70px;
+    width: 70px;
+    font-size: 2rem;
+    line-height: 65px;
+    text-align: center;
+  }
+
+  .mainTitle {
+    font-size: 1.5rem;
+    letter-spacing: 5px;
+  }
+
   .footer-image {
-    width: 60%;
-    margin: 0 20%;
+    width: 80%;
+    margin: 0 10%;
   }
 }
 
-@media screen and (min-height: 1058px) and (min-width: 680px) {
+@media screen and (min-height: 1058px) and (min-width: 700px) {
   :root {
     --decorator-border: 20px;
-  }
-
-  #root {
-    min-height: 602px;
   }
 
   .my-md-3 {
@@ -551,7 +622,7 @@ select:focus {
   .wrapper {
     width: 600px;
     max-width: 90%;
-    height: auto;
+    height: 960px;
     max-height: 90%;
   }
 
@@ -567,6 +638,9 @@ select:focus {
   .avatar {
     height: 80px;
     width: 80px;
+    font-size: 2.5rem;
+    line-height: 75px;
+    text-align: center;
   }
 
   .mainTitle {

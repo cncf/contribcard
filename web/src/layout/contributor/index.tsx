@@ -1,15 +1,13 @@
 import { useParams } from '@solidjs/router';
-import { JSXElement, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
+import { createSignal, JSXElement, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 
+import API from '../../api';
 import clotributor from '../../assets/clotributor.png';
-import {
-  useSelectedContributorId,
-  useSelectedContributorInfoContent,
-  useSetSelectedContributorId,
-} from '../../stores/selectedContributor';
-import { ContributionKind } from '../../types';
+import { ContributionKind, Contributor } from '../../types';
 import prettifyNumber from '../../utils/prettifyNumber';
 import ExternalLink from '../common/ExternalLink';
+import Image from '../common/Image';
+import Loading from '../common/Loading';
 import Badges from './Badges';
 import styles from './Contributor.module.css';
 
@@ -32,7 +30,7 @@ const ContributionKindIcon = (props: Props): JSXElement => {
   return (
     <Switch>
       <Match when={props.kind === ContributionKind.COMMIT}>
-        <svg height="16" viewBox="0 0 16 16" version="1.1" width="16">
+        <svg height="1em" viewBox="0 0 16 16" version="1.1" width="1em">
           <path
             fill={props.color || '#6c757d'}
             d="M11.93 8.5a4.002 4.002 0 0 1-7.86 0H.75a.75.75 0 0 1 0-1.5h3.32a4.002 4.002 0 0 1 7.86 0h3.32a.75.75 0 0 1 0 1.5Zm-1.43-.75a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"
@@ -40,7 +38,7 @@ const ContributionKindIcon = (props: Props): JSXElement => {
         </svg>
       </Match>
       <Match when={props.kind === ContributionKind.ISSUE}>
-        <svg height="16" viewBox="0 0 16 16" version="1.1" width="16">
+        <svg height="1em" viewBox="0 0 16 16" version="1.1" width="1em">
           <path fill={props.color || '#6c757d'} d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
           <path
             fill={props.color || '#6c757d'}
@@ -49,7 +47,7 @@ const ContributionKindIcon = (props: Props): JSXElement => {
         </svg>
       </Match>
       <Match when={props.kind === ContributionKind.PR}>
-        <svg height="16" viewBox="0 0 16 16" version="1.1" width="16">
+        <svg height="1em" viewBox="0 0 16 16" version="1.1" width="1em">
           <path
             fill={props.color || '#6c757d'}
             d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"
@@ -62,9 +60,7 @@ const ContributionKindIcon = (props: Props): JSXElement => {
 
 const ContributorCard = () => {
   const params = useParams();
-  const contributorId = useSelectedContributorId();
-  const setContributorId = useSetSelectedContributorId();
-  const contributor = useSelectedContributorInfoContent();
+  const [contributor, setContributor] = createSignal<Contributor | null | undefined>();
 
   const getFirstContributionLink = () => {
     let url = `https://github.com/${contributor()!.first_contribution.owner}/${
@@ -86,27 +82,27 @@ const ContributorCard = () => {
     return url;
   };
 
+  async function fecthContributorInfo(contributorId: string) {
+    try {
+      const data = await API.getContributorInfo(contributorId);
+      setContributor(data);
+    } catch {
+      setContributor(null);
+    }
+  }
+
   onMount(() => {
-    if (contributorId() === undefined) {
-      setContributorId(params.id);
+    if (contributor() === undefined) {
+      fecthContributorInfo(params.id);
     }
   });
 
   onCleanup(() => {
-    setContributorId();
+    setContributor();
   });
 
   return (
-    <Show
-      when={contributor() !== undefined}
-      fallback={
-        <div class={styles.loadingWrapper}>
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      }
-    >
+    <Show when={contributor() !== undefined} fallback={<Loading />}>
       <Show
         when={contributor() !== null}
         fallback={
@@ -130,14 +126,14 @@ const ContributorCard = () => {
         }
       >
         <div class="d-flex flex-row align-items-center mb-4 pt-0 pt-md-3">
-          <ExternalLink href={`https://github.com/${contributor()!.login}`} class="me-3 avatar" underlined={false}>
-            <img
-              class="d-block w-100 h-100 mask"
-              src={`https://avatars.githubusercontent.com/u/${contributor()!.id}`}
-              alt="Avatar"
-            />
+          <ExternalLink
+            href={`https://github.com/${contributor()!.login}`}
+            class="me-3 text-muted avatar"
+            underlined={false}
+          >
+            <Image class="d-block w-100 h-100 mask" login={contributor()!.login} contributorId={contributor()!.id} />
           </ExternalLink>
-          <div class={`flex-grow-1 ${styles.contributorInfo}`}>
+          <div class={`flex-grow-1 d-flex flex-column justify-content-between ${styles.contributorInfo}`}>
             <div>
               <ExternalLink
                 href={`https://github.com/${contributor()!.login}`}
@@ -147,14 +143,16 @@ const ContributorCard = () => {
                 {contributor()!.login}
               </ExternalLink>
             </div>
-            <div class="mb-1">
+            <div>
               <Show when={contributor()!.contributions.by_kind[ContributionKind.COMMIT] !== undefined}>
                 <div class={styles.badge} title="Commit">
                   <div class="d-flex flex-row align-items-center">
                     <div class={styles.badgeIcon}>
                       <ContributionKindIcon kind={ContributionKind.COMMIT} />
                     </div>
-                    <div>{prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.COMMIT]!, 1)}</div>
+                    <div class={styles.badgeContent}>
+                      {prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.COMMIT]!, 1)}
+                    </div>
                   </div>
                 </div>
               </Show>
@@ -164,7 +162,9 @@ const ContributorCard = () => {
                     <div class={styles.badgeIcon}>
                       <ContributionKindIcon kind={ContributionKind.PR} />
                     </div>
-                    <div>{prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.PR]!, 1)}</div>
+                    <div class={styles.badgeContent}>
+                      {prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.PR]!, 1)}
+                    </div>
                   </div>
                 </div>
               </Show>
@@ -174,7 +174,9 @@ const ContributorCard = () => {
                     <div class={styles.badgeIcon}>
                       <ContributionKindIcon kind={ContributionKind.ISSUE} />
                     </div>
-                    <div>{prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.ISSUE]!, 1)}</div>
+                    <div class={styles.badgeContent}>
+                      {prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.ISSUE]!, 1)}
+                    </div>
                   </div>
                 </div>
               </Show>
@@ -198,12 +200,12 @@ const ContributorCard = () => {
               <div class={`pe-2 text-muted ${styles.contribIcon}`}>
                 <ContributionKindIcon kind={contributor()!.first_contribution.kind} />
               </div>
-              <div class={`d-flex flex-column ${styles.firstContribContent}`}>
+              <div class={`d-flex flex-column justify-content-between ${styles.firstContribContent}`}>
                 <div class={`fw-bold text-truncate w-100 ${styles.firstContributionRepo}`}>
                   {contributor()!.first_contribution.owner}/{contributor()!.first_contribution.repository}
                 </div>
-                <div class={`fw-semibold py-1 text-truncate w-100 ${styles.firstContributionLink}`}>
-                  {contributor()!.first_contribution.title}
+                <div class={`fw-semibold text-truncate w-100 ${styles.firstContributionLink}`}>
+                  {contributor()!.first_contribution.title.trim()}
                 </div>
                 <div class={`text-muted ${styles.date}`}>
                   <small>{formatDate(contributor()!.first_contribution.ts)}</small>
@@ -223,7 +225,7 @@ const ContributorCard = () => {
             <div class={`text-muted text-uppercase ${styles.generalTitle}`}>
               Repositories ({contributor()!.repositories.length})
             </div>
-            <Badges items={contributor()!.repositories} />
+            <Badges items={contributor()!.repositories} withTitle />
           </div>
 
           <div class={`mt-4 pt-0 pt-md-3 mb-2 ${styles.message}`}>Thank you for your contributions!</div>

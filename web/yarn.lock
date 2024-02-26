@@ -502,6 +502,42 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.12.0.tgz#9ffdf9ed133a7464f4ae187eb9e1294413fab235"
   integrity sha512-ZYmr5mS2wd4Dew/JjT0Fqi2NPB/ZhZ2VvPp7SmvPZb4Y1CG/LRcS6tcRo2cYU7zLK5A7cdbhWnnWmUjoI4qapg==
 
+"@solid-primitives/event-listener@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/event-listener/-/event-listener-2.3.1.tgz#a303bc1f090a6c145cf8d71556ec2eac9d37cb7b"
+  integrity sha512-S1AfFYatOJ3g/ZUbGDoKplSGLTTfarQ3Mfd3F/fXb9SnzGtROtd+Y6yLkPVzK4AVw83r2wUSaS0GS6dg8izTEQ==
+  dependencies:
+    "@solid-primitives/utils" "^6.2.2"
+
+"@solid-primitives/resize-observer@^2.0.23":
+  version "2.0.23"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/resize-observer/-/resize-observer-2.0.23.tgz#5ba0cdc415ea03e86fb31ffafade68d33a0536c3"
+  integrity sha512-SgKRzRfy1oFbPSapmtF5H9VQcN66foQaQK3QTyzh4cihIG2k/UiVNjbC+el1nEDnSeAP7zTO4Xsf2UW8dc+aBw==
+  dependencies:
+    "@solid-primitives/event-listener" "^2.3.1"
+    "@solid-primitives/rootless" "^1.4.3"
+    "@solid-primitives/static-store" "^0.0.6"
+    "@solid-primitives/utils" "^6.2.2"
+
+"@solid-primitives/rootless@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/rootless/-/rootless-1.4.3.tgz#9ac2fb5a96135a760031376428a0d195a1f97919"
+  integrity sha512-IPsfUhKsqQOxLtRMQWK2EZAYbL9RKJMLBelLwpaXl9+oa1tl5aNvA6GHgrNrK+85oUhiYh7/OuogO18AuHepqQ==
+  dependencies:
+    "@solid-primitives/utils" "^6.2.2"
+
+"@solid-primitives/static-store@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/static-store/-/static-store-0.0.6.tgz#54249f5db9befef4818b22f8782cfcd8bb95088f"
+  integrity sha512-PtvkbbucbjT+9p95pksOciG9gOnCtJz4IUyAKX1Ld7YwI+QgtPTo0Wuxs8gNbNtLtoDv5PNv5t4YRzUyl0fwdg==
+  dependencies:
+    "@solid-primitives/utils" "^6.2.2"
+
+"@solid-primitives/utils@^6.2.2":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@solid-primitives/utils/-/utils-6.2.2.tgz#01c28bab7b2842b46bd5559716497decc51ad3cd"
+  integrity sha512-11ypVbp987XxETeRqY5Y3OmmTpm8/jZqJXRvo6AyqBthzkvvjEdReuUMU2yVb+pwWGxfZpWHZ6EUCcGXUMhfwg==
+
 "@solidjs/router@^0.12.0":
   version "0.12.4"
   resolved "https://registry.yarnpkg.com/@solidjs/router/-/router-0.12.4.tgz#33383bef4f021bf48b3658ec8f67c1e6bc8cae73"

@@ -135,8 +135,8 @@ WITH contributors AS (
     SELECT DISTINCT author_id AS id, author_login AS login
     FROM contribution
 )
-SELECT json_group_array(json_object(login, id))
-FROM contributors
+SELECT json_group_object(login, id)
+FROM contributors;
 ";
 
 /// Get last commit timestamp.
@@ -146,7 +146,7 @@ FROM commit
 WHERE owner = ?
 AND repository = ?
 ORDER BY ts DESC
-LIMIT 1
+LIMIT 1;
 ";
 
 /// Get last issue or pull request timestamp (we'll pick the older).
