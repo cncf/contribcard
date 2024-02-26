@@ -118,7 +118,7 @@ const Search = () => {
   };
 
   const scrollToHighlightedItem = (index: number) => {
-    const element = document.getElementById(`sl-opt${index}`);
+    const element = document.getElementById(`card_${index}`);
     if (element && dropdownRef() !== undefined) {
       element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
     }
@@ -156,9 +156,9 @@ const Search = () => {
 
   return (
     <div class="mt-5">
-      <div class={`fs-2 mb-4 pb-2 ${styles.searchTitle}`}>Find your contributor card</div>
+      <div class={`mb-4 pb-2 ${styles.searchTitle}`}>Find your contributor card</div>
 
-      <div class={`position-relative ${styles.searchWrapper}`}>
+      <div class="position-relative">
         <div class={`d-flex align-items-center overflow-hidden lh-base bg-white ${styles.searchBar}`}>
           <input
             ref={setInputEl}
@@ -225,7 +225,7 @@ const Search = () => {
                     >
                       <div
                         role="button"
-                        class={`w-100 p-3 position-relative ${styles.btn}`}
+                        class={`w-100 p-2 p-md-3 position-relative ${styles.btn}`}
                         classList={{
                           activeDropdownItem: index() === highlightedContributor(),
                         }}
@@ -234,6 +234,7 @@ const Search = () => {
                           cleanItemsSearch();
                           setValue('');
                         }}
+                        id={`card_${index()}`}
                       >
                         <div class="d-flex flex-row align-items-center">
                           <div class={`me-4 avatar ${styles.miniAvatar}`}>

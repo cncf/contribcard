@@ -27,7 +27,7 @@
   font-size: 0.75rem;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-height: 1058px) and (min-width: 680px) {
   .wrapper {
     max-height: 35px;
     padding-right: 32px;

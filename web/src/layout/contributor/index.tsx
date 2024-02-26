@@ -106,10 +106,10 @@ const ContributorCard = () => {
       <Show
         when={contributor() !== null}
         fallback={
-          <div class={`pt-3 pt-md-5 pb-3 ${styles.noContributor}`}>
-            <div class={`fs-2 mb-4 pb-2 ${styles.title}`}>It looks like you are not a contributor yet...</div>
+          <div class="pt-3 pt-md-5 pb-3">
+            <div class={`mb-4 pb-2 ${styles.title}`}>It looks like you are not a contributor yet...</div>
 
-            <div class={`fs-4 mb-4 pb-4 text-muted ${styles.legend}`}>
+            <div class={`mb-4 pb-4 text-muted ${styles.legend}`}>
               But you can find lots of opportunities to contribute at{' '}
               <ExternalLink href="https://clotributor.dev" class={styles.clotributorLink} underlined>
                 clotributor.dev
@@ -156,7 +156,7 @@ const ContributorCard = () => {
         </div>
 
         <div class="py-0 py-md-2">
-          <div class={`lh-1 text-muted ${styles.subtitle}`}>
+          <div class={`lh-1 text-muted text-truncate ${styles.subtitle}`}>
             <span class="fw-bold">{prettifyNumber(contributor()!.contributions, 1)}</span>{' '}
             {contributor()!.contributions === 1 ? 'contribution' : 'contributions'} to{' '}
             <span class="fw-bold">{contributor()!.repositories.length}</span>{' '}
