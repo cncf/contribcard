@@ -2,6 +2,7 @@ import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from 's
 
 import { useContributorsDataInfo, useContributorsDataList } from '../../stores/contributorsData';
 import { useSelectedContributorId, useSetSelectedContributorId } from '../../stores/selectedContributor';
+import prettifyNumber from '../../utils/prettifyNumber';
 import HoverableItem from '../common/HoverableItem';
 import styles from './Search.module.css';
 
@@ -169,7 +170,7 @@ const Search = () => {
             autocapitalize="none"
             spellcheck={false}
             value={value()}
-            placeholder="Search contributors"
+            placeholder="Search by username"
             onKeyDown={onKeyDown}
             onInput={(e) => setValue(e.target.value)}
           />
@@ -201,6 +202,9 @@ const Search = () => {
             </Show>
           </div>
         </div>
+        <Show when={currentContributors()}>
+          <div class="mt-2">{prettifyNumber(currentContributors()!.length, 1)} contributors and counting!</div>
+        </Show>
         <Show when={visibleDropdown() && visibleContributors() !== null}>
           <div
             ref={setDropdownRef}

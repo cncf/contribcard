@@ -1,5 +1,6 @@
-import { createEffect, createSignal, For, on, onMount } from 'solid-js';
+import { createEffect, createSignal, For, on, onCleanup, onMount } from 'solid-js';
 
+import throttle from '../../utils/throttle';
 import styles from './Badges.module.css';
 
 interface Props {
@@ -8,22 +9,28 @@ interface Props {
 }
 
 const Badges = (props: Props) => {
+  const [wrapper, setWrapper] = createSignal<HTMLDivElement>();
   const [items, setItems] = createSignal<(string | number)[]>();
   const [hiddenItems, setHiddenItems] = createSignal<number | undefined>();
   const [elements, setElements] = createSignal<HTMLDivElement[]>();
   const [lastVisibleItem, setLastVisibleItem] = createSignal<HTMLDivElement>();
+  const [wrapperWidth, setWrapperWidth] = createSignal<number>(0);
 
-  createEffect(() => {
-    if (elements() && hiddenItems() === undefined) {
-      let numHiddenItems: number = 0;
-      elements()!.forEach((i: HTMLDivElement) => {
-        if (i.offsetTop !== 0) {
-          numHiddenItems = numHiddenItems + 1;
+  createEffect(
+    on(wrapperWidth, () => {
+      if (wrapperWidth() > 0) {
+        if (elements()) {
+          let numHiddenItems: number = 0;
+          elements()!.forEach((i: HTMLDivElement) => {
+            if (i.offsetTop !== 0) {
+              numHiddenItems = numHiddenItems + 1;
+            }
+          });
+          setHiddenItems(numHiddenItems);
         }
-      });
-      setHiddenItems(numHiddenItems);
-    }
-  });
+      }
+    })
+  );
 
   createEffect(
     on(hiddenItems, () => {
@@ -34,6 +41,12 @@ const Badges = (props: Props) => {
     })
   );
 
+  const handler = () => {
+    if (wrapper()) {
+      setWrapperWidth(wrapper()!.clientWidth);
+    }
+  };
+
   onMount(() => {
     if (props.sorted !== undefined && props.sorted) {
       const tmp = (props.items as number[]).sort((a, b) => {
@@ -43,10 +56,22 @@ const Badges = (props: Props) => {
     } else {
       setItems(props.items);
     }
+
+    window.addEventListener(
+      'resize',
+      // eslint-disable-next-line solid/reactivity
+      throttle(() => handler(), 400),
+      { passive: true }
+    );
+    handler();
+  });
+
+  onCleanup(() => {
+    window.removeEventListener('resize', handler);
   });
 
   return (
-    <div class={styles.wrapper}>
+    <div ref={setWrapper} class={styles.wrapper}>
       <div class="d-flex flex-row flex-wrap align-items-center mt-2 position-relative">
         <For each={items()}>
           {(i: string | number) => {

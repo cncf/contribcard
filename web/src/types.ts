@@ -5,7 +5,12 @@ export interface UserInfo {
 export interface Contributor {
   id: number;
   login: string;
-  contributions: number;
+  contributions: {
+    total: number;
+    by_kind: {
+      [key in ContributionKind]?: number;
+    };
+  };
   years: number[];
   repositories: string[];
   first_contribution: {

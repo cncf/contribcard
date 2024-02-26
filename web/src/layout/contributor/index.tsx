@@ -15,6 +15,7 @@ import styles from './Contributor.module.css';
 
 interface Props {
   kind: ContributionKind;
+  color?: string;
 }
 
 const formatDate = (ts: number): string => {
@@ -33,21 +34,24 @@ const ContributionKindIcon = (props: Props): JSXElement => {
       <Match when={props.kind === ContributionKind.COMMIT}>
         <svg height="16" viewBox="0 0 16 16" version="1.1" width="16">
           <path
-            fill="#6c757d"
+            fill={props.color || '#6c757d'}
             d="M11.93 8.5a4.002 4.002 0 0 1-7.86 0H.75a.75.75 0 0 1 0-1.5h3.32a4.002 4.002 0 0 1 7.86 0h3.32a.75.75 0 0 1 0 1.5Zm-1.43-.75a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"
           />
         </svg>
       </Match>
       <Match when={props.kind === ContributionKind.ISSUE}>
         <svg height="16" viewBox="0 0 16 16" version="1.1" width="16">
-          <path fill="#6c757d" d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
-          <path fill="#6c757d" d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
+          <path fill={props.color || '#6c757d'} d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+          <path
+            fill={props.color || '#6c757d'}
+            d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"
+          />
         </svg>
       </Match>
       <Match when={props.kind === ContributionKind.PR}>
         <svg height="16" viewBox="0 0 16 16" version="1.1" width="16">
           <path
-            fill="#6c757d"
+            fill={props.color || '#6c757d'}
             d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"
           />
         </svg>
@@ -126,13 +130,13 @@ const ContributorCard = () => {
         }
       >
         <div class="d-flex flex-row align-items-center mb-4 pt-0 pt-md-3">
-          <div class="me-3 avatar">
+          <ExternalLink href={`https://github.com/${contributor()!.login}`} class="me-3 avatar" underlined={false}>
             <img
               class="d-block w-100 h-100 mask"
               src={`https://avatars.githubusercontent.com/u/${contributor()!.id}`}
               alt="Avatar"
             />
-          </div>
+          </ExternalLink>
           <div class={`flex-grow-1 ${styles.contributorInfo}`}>
             <div>
               <ExternalLink
@@ -143,22 +147,45 @@ const ContributorCard = () => {
                 {contributor()!.login}
               </ExternalLink>
             </div>
-            <div>
-              <ExternalLink
-                href={`https://github.com/${contributor()!.login}`}
-                class={`text-muted text-truncate ${styles.githubLink}`}
-                underlined
-              >
-                https://github.com/{contributor()!.login}
-              </ExternalLink>
+            <div class="mb-1">
+              <Show when={contributor()!.contributions.by_kind[ContributionKind.COMMIT] !== undefined}>
+                <div class={styles.badge} title="Commit">
+                  <div class="d-flex flex-row align-items-center">
+                    <div class={styles.badgeIcon}>
+                      <ContributionKindIcon kind={ContributionKind.COMMIT} />
+                    </div>
+                    <div>{prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.COMMIT]!, 1)}</div>
+                  </div>
+                </div>
+              </Show>
+              <Show when={contributor()!.contributions.by_kind[ContributionKind.PR] !== undefined}>
+                <div class={styles.badge} title="Pull Request">
+                  <div class="d-flex flex-row align-items-center">
+                    <div class={styles.badgeIcon}>
+                      <ContributionKindIcon kind={ContributionKind.PR} />
+                    </div>
+                    <div>{prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.PR]!, 1)}</div>
+                  </div>
+                </div>
+              </Show>
+              <Show when={contributor()!.contributions.by_kind[ContributionKind.ISSUE] !== undefined}>
+                <div class={styles.badge} title="Issue">
+                  <div class="d-flex flex-row align-items-center">
+                    <div class={styles.badgeIcon}>
+                      <ContributionKindIcon kind={ContributionKind.ISSUE} />
+                    </div>
+                    <div>{prettifyNumber(contributor()!.contributions.by_kind[ContributionKind.ISSUE]!, 1)}</div>
+                  </div>
+                </div>
+              </Show>
             </div>
           </div>
         </div>
 
         <div class="py-0 py-md-2">
           <div class={`lh-1 text-muted text-truncate ${styles.subtitle}`}>
-            <span class="fw-bold">{prettifyNumber(contributor()!.contributions, 1)}</span>{' '}
-            {contributor()!.contributions === 1 ? 'contribution' : 'contributions'} to{' '}
+            <span class="fw-bold">{prettifyNumber(contributor()!.contributions.total, 1)}</span>{' '}
+            {contributor()!.contributions.total === 1 ? 'contribution' : 'contributions'} to{' '}
             <span class="fw-bold">{contributor()!.repositories.length}</span>{' '}
             {contributor()!.repositories.length === 1 ? 'repository' : 'repositories'}
           </div>
@@ -175,10 +202,10 @@ const ContributorCard = () => {
                 <div class={`fw-bold text-truncate w-100 ${styles.firstContributionRepo}`}>
                   {contributor()!.first_contribution.owner}/{contributor()!.first_contribution.repository}
                 </div>
-                <div class={`fw-semibold my-1 text-truncate w-100 ${styles.firstContributionLink}`}>
+                <div class={`fw-semibold py-1 text-truncate w-100 ${styles.firstContributionLink}`}>
                   {contributor()!.first_contribution.title}
                 </div>
-                <div class="text-muted">
+                <div class={`text-muted ${styles.date}`}>
                   <small>{formatDate(contributor()!.first_contribution.ts)}</small>
                 </div>
               </div>
