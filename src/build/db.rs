@@ -95,7 +95,7 @@ SELECT
                 GROUP BY owner, repository
             )
         ),
-        'years', list(DISTINCT extract('year' from ts)),
+        'years', list(DISTINCT extract('year' FROM ts)),
         'first_contribution', (
             SELECT json_object(
                 'kind', kind,
@@ -168,9 +168,10 @@ SELECT
     author.id AS author_id,
     author.login AS author_login,
     commit.committer.date AS ts,
-    split_part(commit.message, E'\n\n', 1) as title
+    split_part(commit.message, E'\n\n', 1) AS title
 FROM read_json(?)
 WHERE author.login IS NOT NULL
+AND len(parents) <= 1
 ON CONFLICT DO NOTHING;
 ";
 
@@ -178,29 +179,26 @@ ON CONFLICT DO NOTHING;
 pub(crate) const LOAD_CONTRIBUTIONS_FROM_CACHE: &str = "
 BEGIN;
 
--- NOTE: not using commits for now until we de-duplicate commits/prs reliably
---
--- INSERT INTO contribution (
---     kind,
---     owner,
---     repository,
---     sha,
---     author_id,
---     author_login,
---     ts,
---     title
--- )
--- SELECT
---     'commit',
---     owner,
---     repository,
---     sha,
---     author_id,
---     author_login,
---     ts,
---     title
--- FROM cache.commit
--- WHERE title NOT LIKE 'Merge pull request%';
+INSERT INTO contribution (
+    kind,
+    owner,
+    repository,
+    sha,
+    author_id,
+    author_login,
+    ts,
+    title
+)
+SELECT
+    'commit',
+    owner,
+    repository,
+    sha,
+    author_id,
+    author_login,
+    ts,
+    title
+FROM cache.commit;
 
 INSERT INTO contribution (
     kind,
