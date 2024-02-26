@@ -203,7 +203,9 @@ const Search = () => {
           </div>
         </div>
         <Show when={currentContributors()}>
-          <div class="mt-2">{prettifyNumber(currentContributors()!.length, 1)} contributors and counting!</div>
+          <div class={styles.countingMessage}>
+            <span class="fw-bold">{prettifyNumber(currentContributors()!.length, 1)}</span> contributors and counting!
+          </div>
         </Show>
         <Show when={visibleDropdown() && visibleContributors() !== null}>
           <div
