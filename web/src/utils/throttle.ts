@@ -3,7 +3,6 @@ const throttle = (callback: () => void, wait: number) => {
     timeoutId: ReturnType<typeof setTimeout>,
     lastArgs: Parameters<typeof callback>;
 
-   
   const throttled: typeof callback = (...args) => {
     lastArgs = args;
     if (isThrottled) return;
