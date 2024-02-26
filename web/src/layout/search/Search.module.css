@@ -24,6 +24,7 @@
 
 .dropdown {
   position: absolute;
+  top: 3rem;
   padding: 0.5rem 0;
   margin: 0;
   list-style: none;
