@@ -2,6 +2,7 @@
   color: var(--mid-gray);
   font-weight: 600;
   text-align: center;
+  font-size: 1.5rem;
 }
 
 .searchBar {
@@ -48,8 +49,8 @@
 }
 
 .miniAvatar {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
 }
 
 .displayName {
@@ -89,11 +90,7 @@
   }
 }
 
-@media screen and (min-width: 768px) {
-  .searchWrapper {
-    min-height: 474px;
-  }
-
+@media screen and (min-height: 1058px) and (min-width: 680px) {
   .searchTitle {
     font-size: 2rem;
   }

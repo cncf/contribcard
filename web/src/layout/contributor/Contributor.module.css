@@ -37,7 +37,7 @@
 .clotributorWrapper {
   border-radius: 0.5rem;
   overflow: hidden;
-  width: 90%;
+  width: 85%;
 }
 
 .legend {
@@ -70,7 +70,7 @@
 }
 
 .message {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   text-align: center;
 }
 
@@ -102,14 +102,22 @@
 
   .card:hover {
     background-color: rgba(0, 0, 0, 0.015);
+    color: var(--font-color) !important;
   }
 }
 
-@media screen and (min-width: 768px) {
-  .noContributor {
-    min-height: 602px;
+@media screen and (max-height: 1057.99px) and (min-width: 680px) {
+  .clotributorWrapper {
+    width: 65%;
   }
 
+  .title, .legend {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media screen and (min-height: 1058px) and (min-width: 680px) {
   .title {
     font-size: 2rem;
   }

@@ -3,10 +3,11 @@
 
   --decorator-border: 8px;
   --white: #fff;
-  --gray: #303030;
   --mid-gray: #383838;
   --color-1: #0086FF;
   --color-2: #80C2FF;
+  --font-color: #212529;
+  --bg-color: #303030;
 }
 
 *,
@@ -38,8 +39,8 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #212529;
-  background-color: #303030;
+  color: var(--font-color);
+  background-color: var(--bg-color);
   background-image: url(../images/texture.png);
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -51,12 +52,7 @@ small, .small {
 }
 
 a {
-  color: #0d6efd;
   font-weight: 400 !important;
-}
-
-a:hover {
-  color: #0a58ca;
 }
 
 a:not([href]):not([class]), a:not([href]):not([class]):hover {
@@ -323,18 +319,6 @@ button:not(:disabled),
   border-bottom: 1px solid #dee2e6 !important;
 }
 
-.fs-1 {
-  font-size: calc(1.275rem + 1.5vw) !important;
-}
-
-.fs-2 {
-  font-size: calc(1.225rem + 0.9vw) !important;
-}
-
-.fs-3 {
-  font-size: calc(1.2rem + 0.6vw) !important;
-}
-
 .fw-bold {
   font-weight: 700 !important;
 }
@@ -403,8 +387,10 @@ select:focus {
 }
 
 .wrapper {
+  max-width: 400px;
   width: calc(100% - 40px);
-  height: calc(100% - 40px);
+  height: 635px;
+  max-height: calc(100% - 40px);
 }
 
 .content {
@@ -483,17 +469,25 @@ select:focus {
   -webkit-appearance: none;
 }
 
-@media (min-width: 1200px) {
-  .fs-1 {
-    font-size: 2.5rem !important;
+@media screen and (max-height: 1057.99px) and (min-width: 680px) {
+  :root {
+    --decorator-border: 20px;
   }
 
-  .fs-2 {
-    font-size: 2rem !important;
+  .wrapper {
+    width: 500px;
+    max-width: 90%;
+    height: 650px;
+    max-height: 90%;
+  }
+
+  .footer-image {
+    width: 60%;
+    margin: 0 20%;
   }
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-height: 1058px) and (min-width: 680px) {
   :root {
     --decorator-border: 20px;
   }
