@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS commit (
     author_login VARCHAR,
     ts TIMESTAMP,
     title VARCHAR,
+    parents UINTEGER,
     PRIMARY KEY (owner, repository, sha)
 );
 ";
@@ -179,12 +180,12 @@ SELECT
     ? AS repository,
     sha,
     author.id AS author_id,
-    author.login AS author_login,
+    trim(author.login, '\"') AS author_login,
     commit.committer.date AS ts,
-    split_part(commit.message, E'\n\n', 1) AS title
+    split_part(commit.message, E'\n\n', 1) AS title,
+    len(parents) as parents
 FROM read_json(?)
 WHERE author.login IS NOT NULL
-AND len(parents) <= 1
 ON CONFLICT DO NOTHING;
 ";
 
