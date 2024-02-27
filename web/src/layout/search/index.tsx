@@ -1,9 +1,10 @@
+import { useNavigate } from '@solidjs/router';
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from 'solid-js';
 
 import { useContributorsDataInfo, useContributorsDataList } from '../../stores/contributorsData';
-import { useSelectedContributorId, useSetSelectedContributorId } from '../../stores/selectedContributor';
 import prettifyNumber from '../../utils/prettifyNumber';
 import HoverableItem from '../common/HoverableItem';
+import Image from '../common/Image';
 import styles from './Search.module.css';
 
 const SEARCH_DELAY = 2 * 100; // 200ms
@@ -11,10 +12,9 @@ const MIN_CHARACTERS_SEARCH = 3;
 const MAX_CONTRIBUTORS = 10;
 
 const Search = () => {
+  const navigate = useNavigate();
   const currentContributors = useContributorsDataList();
   const contributorsInfo = useContributorsDataInfo();
-  const selectedContributorId = useSelectedContributorId();
-  const setContributorId = useSetSelectedContributorId();
   const [inputEl, setInputEl] = createSignal<HTMLInputElement>();
   const [dropdownRef, setDropdownRef] = createSignal<HTMLInputElement>();
   const [value, setValue] = createSignal<string>('');
@@ -41,20 +41,22 @@ const Search = () => {
         if (visibleContributors() !== null && highlightedContributor() !== null) {
           const selectedContributor = visibleContributors()![highlightedContributor()!];
           if (selectedContributor) {
-            setContributorId(selectedContributor);
-            cleanItemsSearch();
-            setValue('');
+            loadContributor(selectedContributor);
           }
         } else {
           if (value() !== '') {
-            setContributorId(value());
-            cleanItemsSearch();
-            setValue('');
+            loadContributor(value());
           }
         }
         return;
       default:
         return;
+    }
+  };
+
+  const forceBlur = (): void => {
+    if (inputEl()) {
+      inputEl()!.blur();
     }
   };
 
@@ -94,6 +96,16 @@ const Search = () => {
     setVisibleContributors(null);
     setVisibleDropdown(false);
     setHighlightedContributor(null);
+  };
+
+  const loadContributor = (contributorId: string) => {
+    cleanItemsSearch();
+    setValue('');
+    forceBlur();
+    navigate(`/${contributorId}`, {
+      replace: false,
+      scroll: true, // default
+    });
   };
 
   const updateHighlightedItem = (arrow: 'up' | 'down') => {
@@ -204,7 +216,8 @@ const Search = () => {
         </div>
         <Show when={currentContributors()}>
           <div class={styles.countingMessage}>
-            <span class="fw-bold">{prettifyNumber(currentContributors()!.length, 1)}</span> contributors and counting!
+            <span class={`fw-bold ${styles.countingNumber}`}>{prettifyNumber(currentContributors()!.length, 1)}</span>{' '}
+            contributors and counting!
           </div>
         </Show>
         <Show when={visibleDropdown() && visibleContributors() !== null}>
@@ -236,29 +249,16 @@ const Search = () => {
                           activeDropdownItem: index() === highlightedContributor(),
                         }}
                         onClick={() => {
-                          setContributorId(c);
-                          cleanItemsSearch();
-                          setValue('');
+                          loadContributor(c);
                         }}
                         id={`card_${index()}`}
                       >
                         <div class="d-flex flex-row align-items-center">
-                          <div class={`me-4 avatar ${styles.miniAvatar}`}>
-                            <img
-                              class="d-block w-100 h-100 mask"
-                              src={`https://avatars.githubusercontent.com/u/${contributorsInfo()![c]}`}
-                              alt={`${c} avatar`}
-                            />
+                          <div class={`me-4 text-muted avatar ${styles.miniAvatar}`}>
+                            <Image contributorId={contributorsInfo()![c]} login={c} class="d-block w-100 h-100 mask" />
                           </div>
                           <div class={`fw-semibold text-truncate ${styles.displayName}`}>{c}</div>
                         </div>
-                        <Show when={selectedContributorId() === c}>
-                          <div class={`position-absolute ${styles.loading}`}>
-                            <div class={`spinner-border spinner-border-sm ${styles.spinner}`} role="status">
-                              <span class="visually-hidden">Loading...</span>
-                            </div>
-                          </div>
-                        </Show>
                       </div>
                     </HoverableItem>
                   );

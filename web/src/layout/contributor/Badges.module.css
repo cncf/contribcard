@@ -27,7 +27,24 @@
   font-size: 0.75rem;
 }
 
-@media screen and (min-height: 1058px) and (min-width: 680px) {
+@media screen and (min-height: 870px) and (min-width: 620px) {
+  .wrapper {
+    max-height: 31px;
+    padding-right: 30px;
+  }
+
+  .badge {
+    padding: 0.3em 0.6em;
+    font-size: 0.8rem;
+    line-height: 0.9;
+  }
+
+  .hiddenItems {
+    font-size: 0.8rem;
+  }
+}
+
+@media screen and (min-height: 1058px) and (min-width: 700px) {
   .wrapper {
     max-height: 35px;
     padding-right: 32px;

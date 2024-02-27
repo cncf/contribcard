@@ -52,10 +52,10 @@
 }
 
 .displayName {
-  display: block;
-  padding-bottom: 0.15rem;
+  display: inline-block;
+  max-width: 100%;
   font-size: 1.15rem;
-  line-height: 1.15rem;
+  line-height: 1.25rem;
   cursor: pointer;
 }
 
@@ -76,20 +76,15 @@
   text-align: center;
 }
 
-.loadingWrapper {
-  padding: 5rem;
-  text-align: center;
-}
-
 .firstContribContent {
   min-width: 0;
-  line-height: 1;
+  height: 58px;
 }
 
 .firstContributionRepo {
   display: block;
-  line-height: 1.5;
   cursor: pointer;
+  margin-bottom: 2px;
 }
 
 .firstContributionLink {
@@ -97,17 +92,13 @@
   cursor: pointer;
 }
 
-.date {
-  margin-top: 1px;
-}
-
 .badge {
   display: inline-block;
-  padding: 0.25em 0.75em;
-  line-height: 0.7rem;
+  padding: 2px 8px;
+  line-height: 0.8rem;
   color: var(--mid-gray);
   white-space: nowrap;
-  vertical-align: baseline;
+  vertical-align: middle;
   border: 1px solid rgba(0, 0, 0, 0.25);
   font-weight: 600;
   font-size: 0.7rem;
@@ -115,16 +106,9 @@
 }
 
 .badgeIcon {
+  font-size: 90%;
+  line-height: 90%;
   margin-right: 0.5rem;
-  height: 10px;
-  width: 11px;
-}
-
-.badgeIcon svg {
-  position: relative;
-  margin-top: -3px;
-  height: 100%;
-  max-width: 100%;
 }
 
 @media (hover: hover) {
@@ -138,19 +122,57 @@
   }
 }
 
-@media screen and (max-height: 1057.99px) and (min-width: 680px) {
-  .clotributorWrapper {
-    width: 65%;
+@media screen and (min-height: 870px) and (min-width: 620px) {
+  .title {
+    font-size: 1.5rem;
   }
 
-  .title,
   .legend {
-    padding-left: 3rem;
-    padding-right: 3rem;
+    font-size: 1.35rem;
+  }
+
+  .clotributorWrapper {
+    width: 75%;
+  }
+
+  .contributorInfo {
+    height: 60px;
+  }
+
+  .subtitle {
+    font-size: 1.4rem;
+  }
+
+  .subtitle span {
+    font-size: 1.7rem;
+  }
+
+  .displayName {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+  }
+
+  .card {
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+
+  .firstContribContent {
+    height: 72px;
+  }
+
+  .badge {
+    padding: 0.35em 0.8em;
+    font-size: 0.7rem;
+    line-height: 0.9;
+  }
+
+  .message {
+    font-size: 1.35rem;
   }
 }
 
-@media screen and (min-height: 1058px) and (min-width: 680px) {
+@media screen and (min-height: 1058px) and (min-width: 700px) {
   .title {
     font-size: 2rem;
   }
@@ -163,28 +185,30 @@
     width: 75%;
   }
 
+  .contributorInfo {
+    height: 70px;
+  }
+
   .subtitle {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   .subtitle span {
-    font-size: 2.25rem;
+    font-size: 2.1rem;
   }
 
   .displayName {
-    margin-top: -0.35rem;
-    padding-bottom: 0.5rem;
     font-size: 1.75rem;
-    line-height: 1.75rem;
-  }
-
-  .githubLink {
-    font-size: 1.35rem;
+    line-height: 2rem;
   }
 
   .card {
     font-size: 1rem;
     padding: 0.9rem;
+  }
+
+  .firstContribContent {
+    height: 80px;
   }
 
   .message {
@@ -196,22 +220,20 @@
     line-height: 1.5;
   }
 
-  .firstContribContent {
-    line-height: 1.5;
-  }
-
   .badge {
     padding: 0.35em 0.8em;
     font-size: 0.9rem;
     line-height: 1;
   }
+}
 
-  .badgeIcon {
-    height: 12px;
-    width: 13px;
+/* Only mobile */
+@media (pointer: none), (pointer: coarse) {
+  .badge {
+    line-height: 0.6rem;
   }
 
-  .badgeIcon svg {
-    margin-top: -4px;
+  .badgeContent {
+    padding-top: 0.1em;
   }
 }
