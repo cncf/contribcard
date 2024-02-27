@@ -1,12 +1,10 @@
 //! This module defines the functionality of the build CLI subcommand.
 
 use crate::{build::settings::Settings, BuildArgs};
-use anyhow::{format_err, Result};
+use anyhow::Result;
 use askama::Template;
-use futures::stream::{self, StreamExt};
 use rust_embed::RustEmbed;
 use std::{
-    env,
     fs::{self, File},
     io::Write,
     path::{Path, PathBuf},
@@ -40,7 +38,8 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     setup_output_dir(&args.output_dir)?;
 
     // Collect contributions from GitHub
-    collect_contributions(&settings.repositories, &cache_db_file).await?;
+    let collector = github::Collector::new(&cache_db_file)?;
+    collector.collect_contributions(&settings.organizations).await?;
     let contribs_db = prepare_contributions_table(&cache_db_file)?;
 
     // Generate contributors data files
@@ -54,37 +53,6 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
 
     let duration = start.elapsed().as_secs_f64();
     info!("contribcard website built! (took: {:.3}s)", duration);
-    Ok(())
-}
-
-/// Collect contributions from GitHub from each repository.
-#[instrument(skip_all, err)]
-async fn collect_contributions(repositories: &Vec<String>, cache_db_file: &String) -> Result<()> {
-    debug!("collecting contributions");
-
-    // Setup GitHub tokens and collector
-    let Ok(gh_tokens) = env::var("GITHUB_TOKENS") else {
-        return Err(format_err!("required GITHUB_TOKENS not provided"));
-    };
-    let gh_tokens: Vec<String> = gh_tokens.split(',').map(ToString::to_string).collect();
-    let gh_collector = github::Collector::new(&gh_tokens, cache_db_file);
-
-    // Collect contributions from each repository
-    let errors_found: bool = stream::iter(repositories)
-        .map(|repo| async {
-            let (owner, repo) = github::parse_repository(&repo.clone())?;
-            gh_collector.collect_contributions(&owner, &repo).await
-        })
-        .buffer_unordered(gh_tokens.len())
-        .collect::<Vec<Result<()>>>()
-        .await
-        .iter()
-        .any(Result::is_err);
-    if errors_found {
-        return Err(format_err!("something went wrong, see errors above"));
-    }
-
-    debug!("done!");
     Ok(())
 }
 
