@@ -5,16 +5,19 @@ use anyhow::{format_err, Context, Result};
 use chrono::DateTime;
 use deadpool::unmanaged::{Object, Pool};
 use duckdb::{AccessMode, Config, OptionalExt};
+use futures::stream::{self, StreamExt};
 use reqwest::{
     header::{self, HeaderMap},
     StatusCode,
 };
+use serde_json::Value;
 use std::{
-    io::Write,
+    env,
+    io::{Seek, SeekFrom, Write},
     sync::{Arc, Mutex},
 };
 use tempfile::NamedTempFile;
-use tracing::{instrument, trace};
+use tracing::{debug, instrument, trace};
 
 /// GitHub API base url.
 const API_BASE_URL: &str = "https://api.github.com";
@@ -22,7 +25,7 @@ const API_BASE_URL: &str = "https://api.github.com";
 /// Minimum rate limit remaining value to consider a token valid.
 const MIN_RATELIMIT_REMAINING: i64 = 100;
 
-/// Collect and cache contributions (commits, issues, prs, etc) from GitHub.
+/// Collect and cache contributions (commits, issues, prs) from GitHub.
 ///
 /// A collector instance can be used to collect contributions from multiple
 /// repositories concurrently and store them in a cache database. The first
@@ -38,26 +41,88 @@ pub(crate) struct Collector {
 
 impl Collector {
     /// Create a new Collector instance.
-    pub(crate) fn new(tokens: &[String], cache_db_file: &String) -> Self {
-        Self {
+    pub(crate) fn new(cache_db_file: &String) -> Result<Self> {
+        // Setup GitHub tokens
+        let Ok(tokens) = env::var("GITHUB_TOKENS") else {
+            return Err(format_err!("required GITHUB_TOKENS not provided"));
+        };
+        let tokens: Vec<String> = tokens.split(',').map(ToString::to_string).collect();
+
+        Ok(Self {
             cache_db_file: cache_db_file.to_string(),
             cache_lock: Arc::new(Mutex::new(())),
             http_clients: Pool::from(
                 tokens.iter().map(|token| Self::new_http_client(token)).collect::<Vec<reqwest::Client>>(),
             ),
-        }
+        })
     }
 
-    /// Collect contributions (commits, issues, prs, etc) from GitHub from the
-    /// provided repository and cache them in a local database.
+    /// Collect contributions (commits, issues, prs) from GitHub for each of
+    /// the repositories in the GitHub organizations provided.
     #[instrument(skip(self))]
-    pub(crate) async fn collect_contributions(&self, owner: &str, repo: &str) -> Result<()> {
-        self.collect_commits(owner, repo).await.context("error collecting commits")?;
-        self.collect_issues_and_prs(owner, repo)
-            .await
-            .context("error collecting issues and pull requests")?;
+    pub(crate) async fn collect_contributions(&self, orgs: &[String]) -> Result<()> {
+        debug!("collecting contributions");
 
+        // Fetch organizations' repositories
+        let mut repositories = vec![];
+        for org in orgs {
+            repositories.extend(self.list_repositories(org).await?);
+        }
+
+        // Collect contributions from each repository
+        let errors_found: bool = stream::iter(repositories)
+            .map(|(owner, repo)| async move {
+                self.collect_commits(&owner, &repo).await.context("error collecting commits")?;
+                self.collect_issues_and_prs(&owner, &repo)
+                    .await
+                    .context("error collecting issues and pull requests")
+            })
+            .buffer_unordered(self.http_clients.status().size)
+            .collect::<Vec<Result<()>>>()
+            .await
+            .iter()
+            .any(Result::is_err);
+        if errors_found {
+            return Err(format_err!("something went wrong, see errors above"));
+        }
+
+        debug!("done!");
         Ok(())
+    }
+
+    /// List repositories in the GitHub organization provided.
+    #[instrument(skip(self))]
+    pub(crate) async fn list_repositories(&self, org: &str) -> Result<Vec<(String, String)>> {
+        let mut repositories = vec![];
+
+        // Fetch repositories pages until there are no more available
+        let mut url = format!("{API_BASE_URL}/orgs/{org}/repos?type=public&per_page=100");
+        loop {
+            // Fetch page
+            let (headers, Some(mut body)) = self.fetch_page(&url).await? else {
+                break;
+            };
+
+            // Parse response and extract repositories
+            body.seek(SeekFrom::Start(0))?;
+            let v: Value = serde_json::from_reader(&body)?;
+            if let Some(repos) = v.as_array() {
+                for repo in repos {
+                    repositories.push((
+                        org.to_string(),
+                        repo["name"].as_str().expect("name to be a string").to_string(),
+                    ));
+                }
+            }
+
+            // Get next page url
+            let Some(next_page_url) = Self::next_page(&headers)? else {
+                break;
+            };
+            url = next_page_url;
+        }
+
+        Ok(repositories)
     }
 
     /// Collect and cache all commits available since the last one processed.
@@ -272,18 +337,4 @@ impl Collector {
             .build()
             .expect("client to be valid")
     }
-}
-
-/// Helper function to extract the owner and name of the repository provided.
-#[instrument(err)]
-pub(crate) fn parse_repository(repo: &str) -> Result<(String, String)> {
-    let parts: Vec<&str> = repo.split('/').collect();
-    if parts.len() != 2 {
-        return Err(format_err!("invalid repository (expected owner/repo)"));
-    }
-
-    let owner = parts[0].to_string();
-    let repo = parts[1].to_string();
-
-    Ok((owner, repo))
 }

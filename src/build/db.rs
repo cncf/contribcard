@@ -101,9 +101,9 @@ SELECT
             )
         ),
         'repositories', (
-            SELECT list(repository ORDER BY total DESC)
+            SELECT list(format('{}/{}', owner, repository) ORDER BY total DESC)
             FROM (
-                SELECT DISTINCT repository, count(*) AS total
+                SELECT DISTINCT owner, repository, count(*) AS total
                 FROM contribution
                 WHERE author_id = contribution_parent.author_id
                 GROUP BY owner, repository
