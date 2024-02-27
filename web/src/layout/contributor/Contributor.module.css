@@ -236,4 +236,17 @@
   .badgeContent {
     padding-top: 0.1em;
   }
+
+  .displayName {
+    position: relative;
+    margin-bottom: -0.35rem;
+  }
+
+  .subtitle {
+    font-size: 1.05rem;
+  }
+
+  .subtitle span {
+    font-size: 1.15rem;
+  }
 }
