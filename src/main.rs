@@ -45,6 +45,10 @@ struct BuildArgs {
     #[arg(long)]
     cache_dir: Option<PathBuf>,
 
+    /// Whether contributions should be collected or not.
+    #[arg(long)]
+    collect_contributions: Option<bool>,
+
     /// Name of the contribcard website (i.e. kubernetes).
     #[arg(long)]
     name: String,
