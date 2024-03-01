@@ -9,7 +9,7 @@ on:
 jobs:
   lint-and-test-cli-tool:
     runs-on:
-      labels: ubuntu-latest
+      labels: ubuntu-latest-16-cores
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
