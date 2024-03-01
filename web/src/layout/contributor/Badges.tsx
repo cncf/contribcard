@@ -9,6 +9,8 @@ interface Props {
   withTitle?: boolean;
 }
 
+const MAX_ITEMS = 10;
+
 const Badges = (props: Props) => {
   const [container, setContainer] = createSignal<HTMLDivElement>();
   const [items, setItems] = createSignal<(string | number)[]>();
@@ -38,17 +40,18 @@ const Badges = (props: Props) => {
 
   const checkElements = () => {
     if (elements()) {
-      let numHiddenItems: number = 0;
+      let numVisibleItems: number = 0;
       elements()!.forEach((i: HTMLDivElement) => {
-        if (i.offsetTop !== 0) {
-          numHiddenItems = numHiddenItems + 1;
+        if (i.offsetTop === 0) {
+          numVisibleItems = numVisibleItems + 1;
         }
       });
+      const numHiddenItems = props.items.length - numVisibleItems;
 
       batch(() => {
         setHiddenItems(numHiddenItems);
         if (numHiddenItems > 0) {
-          const item = elements()![elements()!.length - numHiddenItems - 1];
+          const item = elements()![numVisibleItems - 1];
           setLastVisibleItem(item);
         }
       });
@@ -74,7 +77,7 @@ const Badges = (props: Props) => {
   return (
     <div ref={setContainer} class={styles.wrapper}>
       <div class="d-flex flex-row flex-wrap align-items-center mt-2 position-relative">
-        <For each={items()}>
+        <For each={[...(items() || [])].splice(0, MAX_ITEMS)}>
           {(i: string | number) => {
             return (
               <div

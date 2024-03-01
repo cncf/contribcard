@@ -29,3 +29,12 @@ export enum ContributionKind {
   ISSUE = 'issue',
   PR = 'pull_request',
 }
+
+export enum LinkShare {
+  X = 'x',
+  Facebook = 'facebook',
+  LinkedIn = 'linkedin',
+  Reddit = 'reddit',
+  WhatsApp = 'whatsapp',
+  Email = 'email',
+}

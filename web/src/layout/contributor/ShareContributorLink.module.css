@@ -1,0 +1,180 @@
+.shareBtn {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: var(--color-1);
+  border: 2px solid var(--color-2);
+  padding: 0.2rem 0.75rem;
+  margin: 0 0 0 0.75rem;
+  cursor: pointer;
+}
+
+.shareIcon {
+  position: relative;
+  margin-top: -2px;
+  font-size: 90%;
+}
+
+.wrapper {
+  position: absolute;
+  bottom: -95px;
+  left: -1rem;
+  right: -1rem;
+  overflow: hidden;
+  opacity: 0;
+  max-height: 0;
+}
+
+.visible {
+  max-height: 700px;
+  animation-name: fadeIn;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.content {
+  margin-top: 15px;
+  background-color: #fff;
+  border-top: 1px solid #dee2e6 !important;
+  box-shadow: 0 -0.35rem 0.5rem rgba(0, 0, 0, 0.15);
+  padding: 1.25rem 1rem;
+}
+
+.title {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-align: start;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  border: none;
+  background-color: transparent;
+}
+
+.buttons {
+  font-size: 1.5rem;
+  overflow-x: auto;
+  max-width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.button {
+  margin-right: 0.75rem;
+  border-radius: 50%;
+  line-height: 0;
+  height: 2.75rem;
+  width: 2.75rem;
+  color: #fff;
+  background-color: var(--color-1);
+  border: 2px solid var(--color-2);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media screen and (min-height: 870px) and (min-width: 620px) {
+  .shareBtn {
+    margin: 0 0 0 1rem;
+    font-size: 1rem;
+    padding: 0.2rem 1rem;
+  }
+
+  .title {
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .wrapper {
+    bottom: -125px;
+    left: -2rem;
+    right: -2rem;
+  }
+
+  .content {
+    padding: 2rem;
+  }
+
+  .closeBtn {
+    top: 2.5rem;
+    right: 1.5rem;
+  }
+
+  .button {
+    margin: 0 1rem 0 0;
+    height: 3rem;
+    width: 3rem;
+  }
+}
+
+@media screen and (min-height: 1058px) and (min-width: 700px) {
+  .shareBtn {
+    margin: 0 0 0 1rem;
+    font-size: 1.2rem;
+    padding: 0.25rem 1.35rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .wrapper {
+    bottom: -179px;
+    left: -3rem;
+    right: -3rem;
+  }
+
+  .content {
+    padding: 1.5rem 3rem;
+  }
+
+  .closeBtn {
+    top: 2.25rem;
+    right: 3rem;
+  }
+
+  .button {
+    margin: 0 1rem 0 0;
+    height: 3rem;
+    width: 3rem;
+  }
+}
+
+/* Only mobile */
+@media (pointer: none), (pointer: coarse) {
+  .shareBtn {
+    padding: 0.4rem 0.75rem;
+    margin: -0.2rem 0 -0.2rem 0.75rem;
+  }
+
+  .closeBtn {
+    right: 0;
+  }
+
+  .wrapper {
+    bottom: -78px;
+  }
+
+  .buttons {
+    margin-bottom: 0;
+  }
+
+  .button {
+    font-size: 1.25rem;
+    margin: 0 0.5rem 0 0;
+    height: 44px;
+    width: 44px;
+  }
+}
