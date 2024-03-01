@@ -72,7 +72,8 @@
 }
 
 .message {
-  font-size: 1.1rem;
+  margin-top: 1rem;
+  font-size: 1rem;
   text-align: center;
 }
 
@@ -168,6 +169,7 @@
   }
 
   .message {
+    margin-top: 1.5rem;
     font-size: 1.35rem;
   }
 }
@@ -212,6 +214,7 @@
   }
 
   .message {
+    margin-top: 1.5rem;
     font-size: 1.75rem;
   }
 
@@ -240,6 +243,10 @@
   .displayName {
     position: relative;
     margin-bottom: -0.35rem;
+  }
+
+  .firstContribContent {
+    height: 55px;
   }
 
   .subtitle {

@@ -53,6 +53,7 @@ small, .small {
 
 a {
   font-weight: 400 !important;
+  cursor: pointer;
 }
 
 a:not([href]):not([class]), a:not([href]):not([class]):hover {
@@ -480,6 +481,21 @@ select:focus {
   margin: 0 10%;
 }
 
+.powered-text {
+  position: absolute;
+  bottom: -2.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #ced4da;
+  font-size: 0.7rem;
+}
+
+.link {
+  color: #fff;
+  font-weight: 600 !important;
+}
+
 ::-webkit-search-decoration {
   -webkit-appearance: none;
 }
@@ -564,6 +580,10 @@ select:focus {
   .footer-image {
     width: 80%;
     margin: 0 10%;
+  }
+
+  .powered-text {
+    bottom: -3rem;
   }
 }
 
@@ -651,5 +671,22 @@ select:focus {
   .footer-image {
     width: 100%;
     margin: 0;
+  }
+
+  .powered-text {
+    bottom: -4rem;
+  }
+}
+
+@media screen and (max-height: 740px) {
+  .powered-text {
+    display: none;
+  }
+}
+
+/* Only mobile */
+@media (pointer: none), (pointer: coarse) {
+  .powered-text {
+    display: none;
   }
 }

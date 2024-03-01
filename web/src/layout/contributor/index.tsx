@@ -10,6 +10,7 @@ import Image from '../common/Image';
 import Loading from '../common/Loading';
 import Badges from './Badges';
 import styles from './Contributor.module.css';
+import ShareContributorLink from './ShareContributorLink';
 
 interface Props {
   kind: ContributionKind;
@@ -145,7 +146,14 @@ const ContributorCard = () => {
             </div>
             <div>
               <Show when={contributor()!.contributions.by_kind[ContributionKind.COMMIT] !== undefined}>
-                <div class={styles.badge} title="Commit">
+                <div
+                  class={styles.badge}
+                  title={
+                    contributor()!.contributions.by_kind[ContributionKind.COMMIT]! === 1
+                      ? '1 commit'
+                      : `${contributor()!.contributions.by_kind[ContributionKind.COMMIT]!} commits`
+                  }
+                >
                   <div class="d-flex flex-row align-items-center">
                     <div class={styles.badgeIcon}>
                       <ContributionKindIcon kind={ContributionKind.COMMIT} />
@@ -157,7 +165,14 @@ const ContributorCard = () => {
                 </div>
               </Show>
               <Show when={contributor()!.contributions.by_kind[ContributionKind.PR] !== undefined}>
-                <div class={styles.badge} title="Pull Request">
+                <div
+                  class={styles.badge}
+                  title={
+                    contributor()!.contributions.by_kind[ContributionKind.PR]! === 1
+                      ? '1 pull request'
+                      : `${contributor()!.contributions.by_kind[ContributionKind.PR]!} pull requests`
+                  }
+                >
                   <div class="d-flex flex-row align-items-center">
                     <div class={styles.badgeIcon}>
                       <ContributionKindIcon kind={ContributionKind.PR} />
@@ -169,7 +184,14 @@ const ContributorCard = () => {
                 </div>
               </Show>
               <Show when={contributor()!.contributions.by_kind[ContributionKind.ISSUE] !== undefined}>
-                <div class={styles.badge} title="Issue">
+                <div
+                  class={styles.badge}
+                  title={
+                    contributor()!.contributions.by_kind[ContributionKind.ISSUE]! === 1
+                      ? '1 issue'
+                      : `${contributor()!.contributions.by_kind[ContributionKind.ISSUE]!} issues`
+                  }
+                >
                   <div class="d-flex flex-row align-items-center">
                     <div class={styles.badgeIcon}>
                       <ContributionKindIcon kind={ContributionKind.ISSUE} />
@@ -228,7 +250,12 @@ const ContributorCard = () => {
             <Badges items={contributor()!.repositories} withTitle />
           </div>
 
-          <div class={`mt-4 pt-0 pt-md-3 mb-2 ${styles.message}`}>Thank you for your contributions!</div>
+          <div class={`pt-0 pt-md-3 ${styles.message}`}>
+            <div class="d-flex flex-row align-items-center justify-content-center">
+              <div>Thanks for your contributions!</div>
+              <ShareContributorLink />
+            </div>
+          </div>
         </div>
       </Show>
     </Show>
