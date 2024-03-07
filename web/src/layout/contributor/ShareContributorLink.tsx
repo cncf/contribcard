@@ -142,7 +142,7 @@ const ShareContributorLink = () => {
   return (
     <>
       <button class={styles.shareBtn} onClick={() => setVisibleButtons(!visibleButtons())}>
-        <div class="d-flex flex-row align-items-center">
+        <div class="d-flex flex-row align-items-center justify-content-center">
           <div class={`me-2 ${styles.shareIcon}`}>
             <svg
               stroke="currentColor"

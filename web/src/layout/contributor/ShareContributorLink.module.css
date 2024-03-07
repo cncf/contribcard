@@ -1,11 +1,12 @@
 .shareBtn {
   font-size: 0.9rem;
   font-weight: bold;
+  width: 145px;
   color: #fff;
   background-color: var(--color-1);
   border: 2px solid var(--color-2);
   padding: 0.2rem 0.75rem;
-  margin: 0 0 0 0.75rem;
+  margin: 0 0.75rem 0 0;
   cursor: pointer;
 }
 
@@ -17,6 +18,7 @@
 
 .wrapper {
   position: absolute;
+  z-index: 1;
   bottom: -95px;
   left: -1rem;
   right: -1rem;
@@ -86,9 +88,10 @@
 
 @media screen and (min-height: 870px) and (min-width: 620px) {
   .shareBtn {
-    margin: 0 0 0 1rem;
+    margin: 0 1rem 0 0;
     font-size: 1rem;
     padding: 0.2rem 1rem;
+    width: 175px;
   }
 
   .title {
@@ -120,9 +123,10 @@
 
 @media screen and (min-height: 1058px) and (min-width: 700px) {
   .shareBtn {
-    margin: 0 0 0 1rem;
+    margin: 0 1rem 0 0;
     font-size: 1.2rem;
     padding: 0.25rem 1.35rem;
+    width: 215px;
   }
 
   .title {
@@ -155,8 +159,8 @@
 /* Only mobile */
 @media (pointer: none), (pointer: coarse) {
   .shareBtn {
-    padding: 0.4rem 0.75rem;
-    margin: -0.2rem 0 -0.2rem 0.75rem;
+    padding: 0.2rem 0.75rem;
+    width: 135px;
   }
 
   .closeBtn {
