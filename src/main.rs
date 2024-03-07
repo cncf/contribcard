@@ -41,6 +41,18 @@ enum Command {
 /// Build command arguments.
 #[derive(Args)]
 struct BuildArgs {
+    /// Base cache database URL.
+    #[arg(long)]
+    base_cache_db_url: Option<String>,
+
+    /// Username used to fetch the base cache database (basic auth).
+    #[arg(long)]
+    base_cache_db_username: Option<String>,
+
+    /// Password used to fetch the base cache database (basic auth).
+    #[arg(long)]
+    base_cache_db_password: Option<String>,
+
     /// Cache directory.
     #[arg(long)]
     cache_dir: Option<PathBuf>,

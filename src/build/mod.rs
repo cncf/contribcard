@@ -1,7 +1,7 @@
 //! This module defines the functionality of the build CLI subcommand.
 
 use crate::{build::settings::Settings, BuildArgs};
-use anyhow::Result;
+use anyhow::{bail, Context, Result};
 use askama::Template;
 use rust_embed::RustEmbed;
 use std::{
@@ -34,7 +34,8 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     // Initial setup
     let settings = Settings::new(&args.settings_file)?;
     let cache_dir = setup_cache_dir(&args.cache_dir)?;
-    let cache_db_file = setup_cache_db(&cache_dir, &args.name)?;
+    let base_cache_db = BaseCacheDB::new(args);
+    let cache_db_file = setup_cache_db(&cache_dir, &args.name, &base_cache_db).await?;
     setup_output_dir(&args.output_dir)?;
 
     // Collect contributions from GitHub
@@ -143,13 +144,39 @@ fn render_index(output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<(
 }
 
 /// Setup cache database.
-#[instrument(err)]
-pub(crate) fn setup_cache_db(cache_dir: &Path, name: &str) -> Result<String> {
+#[instrument(skip(base_db), err)]
+pub(crate) async fn setup_cache_db(
+    cache_dir: &Path,
+    name: &str,
+    base_db: &Option<BaseCacheDB>,
+) -> Result<String> {
     debug!("setting up cache database");
 
+    // If there isn't a cache database yet, use the base one (if provided)
     let path = cache_dir.join(format!("{name}.db"));
-    let db = duckdb::Connection::open(&path)?;
+    if !path.exists() && base_db.is_some() {
+        // Download base cache database
+        let base_db = base_db.as_ref().expect("base db to be present");
+        debug!("fetching base cache database");
+        let mut request = reqwest::Client::new().get(&base_db.url);
+        if base_db.username.is_some() {
+            request = request.basic_auth(
+                base_db.username.as_ref().expect("username to be present"),
+                base_db.password.as_ref(),
+            );
+        }
+        let response = request.send().await.context("error fetching base cache db")?;
+        if response.status() != reqwest::StatusCode::OK {
+            bail!("error fetching base cache db: {}", response.status());
+        }
 
+        // Store it in the cache directory
+        let base_db_data = response.bytes().await?;
+        fs::write(&path, &base_db_data).context("error writing base cache db")?;
+    }
+
+    // Create tables if they don't already exist (i.e. new database)
+    let db = duckdb::Connection::open(&path)?;
     db.execute(db::CREATE_COMMIT_TABLE, [])?;
     db.execute(db::CREATE_ISSUE_TABLE, [])?;
     db.execute(db::CREATE_PULL_REQUEST_TABLE, [])?;
@@ -196,4 +223,27 @@ fn setup_output_dir(output_dir: &Path) -> Result<()> {
     }
 
     Ok(())
+}
+
+/// Base cache database configuration.
+#[derive(Debug, Clone, Default, PartialEq)]
+struct BaseCacheDB {
+    url: String,
+    username: Option<String>,
+    password: Option<String>,
+}
+
+impl BaseCacheDB {
+    /// Create a new BaseCacheDB instance from the build arguments provided.
+    fn new(args: &BuildArgs) -> Option<Self> {
+        let Some(url) = args.base_cache_db_url.as_ref() else {
+            return None;
+        };
+
+        Some(Self {
+            url: url.clone(),
+            username: args.base_cache_db_username.clone(),
+            password: args.base_cache_db_password.clone(),
+        })
+    }
 }

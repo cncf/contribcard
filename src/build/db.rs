@@ -1,4 +1,5 @@
-//! This modules defines SQL statements to setup and interact with the database.
+//! This modules defines some SQL statements to setup and interact with the
+//! database.
 
 /// Copy commits from the temporary database to the cache database.
 pub(crate) const COPY_COMMITS_TO_CACHE: &str = "
