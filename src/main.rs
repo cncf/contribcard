@@ -16,7 +16,7 @@ mod serve;
 #[derive(Parser)]
 #[command(
     version,
-    about = "Contribcard CLI tool
+    about = "ContribCard CLI tool
 
 https://github.com/cncf/contribcard"
 )]
@@ -57,7 +57,7 @@ struct BuildArgs {
     #[arg(long)]
     output_dir: PathBuf,
 
-    /// Contribcard settings file.
+    /// ContribCard settings file.
     #[arg(long)]
     settings_file: PathBuf,
 }

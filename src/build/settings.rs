@@ -4,7 +4,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::{fs::File, path::Path};
 
-/// Contribcard settings.
+/// ContribCard settings.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub(crate) struct Settings {
     pub organizations: Vec<String>,
