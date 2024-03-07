@@ -1,7 +1,7 @@
 //! This module is in charge of collecting contributions from GitHub.
 
 use crate::build::db;
-use anyhow::{format_err, Context, Result};
+use anyhow::{bail, Context, Result};
 use chrono::DateTime;
 use deadpool::unmanaged::{Object, Pool};
 use duckdb::{AccessMode, Config, OptionalExt};
@@ -44,7 +44,7 @@ impl Collector {
     pub(crate) fn new(cache_db_file: &String) -> Result<Self> {
         // Setup GitHub tokens
         let Ok(tokens) = env::var("GITHUB_TOKENS") else {
-            return Err(format_err!("required GITHUB_TOKENS not provided"));
+            bail!("required GITHUB_TOKENS not provided");
         };
         let tokens: Vec<String> = tokens.split(',').map(ToString::to_string).collect();
 
@@ -83,7 +83,7 @@ impl Collector {
             .iter()
             .any(Result::is_err);
         if errors_found {
-            return Err(format_err!("something went wrong, see errors above"));
+            bail!("something went wrong, see errors above");
         }
 
         debug!("done!");
@@ -243,7 +243,7 @@ impl Collector {
         let client = self.http_clients.get().await?;
         let response = client.get(url).send().await?;
         if response.status() != StatusCode::OK {
-            return Err(format_err!("unexpected status code ({:?})", response.status()));
+            bail!("unexpected status code ({:?})", response.status());
         }
 
         // Extract headers and copy body to a temporary file
