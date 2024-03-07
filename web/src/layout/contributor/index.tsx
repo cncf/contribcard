@@ -1,10 +1,11 @@
-import { useParams } from '@solidjs/router';
+import { useLocation, useParams } from '@solidjs/router';
 import { createSignal, JSXElement, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 
 import API from '../../api';
 import clotributor from '../../assets/clotributor.png';
 import { ContributionKind, Contributor } from '../../types';
 import prettifyNumber from '../../utils/prettifyNumber';
+import updateMetaTags from '../../utils/updateMetaTags';
 import ExternalLink from '../common/ExternalLink';
 import Image from '../common/Image';
 import Loading from '../common/Loading';
@@ -60,6 +61,7 @@ const ContributionKindIcon = (props: Props): JSXElement => {
 };
 
 const ContributorCard = () => {
+  const location = useLocation();
   const params = useParams();
   const [contributor, setContributor] = createSignal<Contributor | null | undefined>();
 
@@ -96,6 +98,7 @@ const ContributorCard = () => {
     if (contributor() === undefined) {
       fecthContributorInfo(params.id);
     }
+    updateMetaTags(`${window.location.origin}${location.pathname}`);
   });
 
   onCleanup(() => {

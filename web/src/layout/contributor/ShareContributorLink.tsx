@@ -92,6 +92,9 @@ const LinkIcon = (props: Props): JSXElement => {
   );
 };
 
+export const DESCRIPTION = `Happy #kuberTENes! Check out my #FirstContribution to Kubernetes`;
+export const HASHTAGS = ['kuberTENes', 'FirstContribution'];
+
 const ShareContributorLink = () => {
   const [visibleButtons, setVisibleButtons] = createSignal<boolean>(false);
 
@@ -99,22 +102,21 @@ const ShareContributorLink = () => {
     setVisibleButtons(false);
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const urlToShare = window.location.href;
-    const content = `Happy #Kubernetes10th! Check out my #FirstContribution to Kubernetes`;
     let url = '';
 
     switch (k) {
       case LinkShare.X:
         url += `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-          content
-        )}&url=${urlToShare}&hashtags=Kubernetes10th,FirstContribution`;
+          DESCRIPTION
+        )}&url=${urlToShare}&hashtags=${HASHTAGS.join(',')}`;
         break;
       case LinkShare.Facebook:
-        url += `https://www.facebook.com/sharer/sharer.php?u=${urlToShare}&hashtag=Kubernetes10th&quote=${encodeURIComponent(
-          content
+        url += `https://www.facebook.com/sharer/sharer.php?u=${urlToShare}&hashtag=${HASHTAGS[0]}&quote=${encodeURIComponent(
+          DESCRIPTION
         )}`;
         break;
       case LinkShare.LinkedIn:
-        url += `https://www.linkedin.com/shareArticle?url=${urlToShare}&title=${encodeURIComponent(content)}&mini=true`;
+        url += `https://www.linkedin.com/shareArticle?url=${urlToShare}&title=${encodeURIComponent(DESCRIPTION)}&mini=true`;
         break;
       case LinkShare.WhatsApp:
         if (isMobile) {
@@ -122,15 +124,15 @@ const ShareContributorLink = () => {
         } else {
           url += 'https://web.whatsapp.com/send';
         }
-        url += `?text=${encodeURIComponent(`${content} ${urlToShare}`)}`;
+        url += `?text=${encodeURIComponent(`${DESCRIPTION} ${urlToShare}`)}`;
         break;
       case LinkShare.Email:
-        url += `mailto:?subject=${encodeURIComponent('Happy #Kubernetes10th!')}&body=${encodeURIComponent(
-          `${content} ${urlToShare}`
+        url += `mailto:?subject=${encodeURIComponent('Happy #kuberTENes!')}&body=${encodeURIComponent(
+          `${DESCRIPTION} ${urlToShare}`
         )}`;
         break;
       case LinkShare.Reddit:
-        url += `https://www.reddit.com/submit?url=${urlToShare}&title=${encodeURIComponent(content)}`;
+        url += `https://www.reddit.com/submit?url=${urlToShare}&title=${encodeURIComponent(DESCRIPTION)}`;
         break;
     }
 
