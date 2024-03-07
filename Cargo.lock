@@ -1067,6 +1067,7 @@ dependencies = [
  "dirs",
  "duckdb",
  "futures",
+ "md-5",
  "mime_guess",
  "parse_link_header",
  "reqwest",

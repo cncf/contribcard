@@ -90,18 +90,34 @@ SELECT
             SELECT json_object(
                 'total', count(contribution_parent),
                 'by_kind', (
-                    SELECT json_group_object(kind, total)
-                    FROM (
-                        SELECT kind, count(*) AS total
-                        FROM contribution
-                        WHERE author_id = contribution_parent.author_id
-                        GROUP BY kind
+                    SELECT json_object(
+                        'commit', (
+                            SELECT count(*)
+                            FROM contribution
+                            WHERE kind = 'commit'
+                            AND author_id = contribution_parent.author_id
+                        ),
+                        'issue', (
+                            SELECT count(*)
+                            FROM contribution
+                            WHERE kind = 'issue'
+                            AND author_id = contribution_parent.author_id
+                        ),
+                        'pull_request', (
+                            SELECT count(*)
+                            FROM contribution
+                            WHERE kind = 'pull_request'
+                            AND author_id = contribution_parent.author_id
+                        )
                     )
                 )
             )
         ),
         'repositories', (
-            SELECT list(format('{}/{}', owner, repository) ORDER BY total DESC)
+            SELECT list(
+                format('{}/{}', owner, repository)
+                ORDER BY total DESC, owner ASC, repository ASC
+            )
             FROM (
                 SELECT DISTINCT owner, repository, count(*) AS total
                 FROM contribution
@@ -109,7 +125,7 @@ SELECT
                 GROUP BY owner, repository
             )
         ),
-        'years', list(DISTINCT extract('year' FROM ts)),
+        'years', list_reverse_sort(list(DISTINCT extract('year' FROM ts))),
         'first_contribution', (
             SELECT json_object(
                 'kind', kind,
@@ -121,7 +137,7 @@ SELECT
                 'ts', extract('epoch' FROM ts)::BIGINT
             ) FROM contribution
             WHERE author_id = contribution_parent.author_id
-            ORDER BY ts ASC
+            ORDER BY ts ASC, owner ASC, repository ASC, title ASC, number ASC, sha ASC
             LIMIT 1
         )
     ) AS summary
