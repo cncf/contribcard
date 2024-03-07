@@ -3,12 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contribcard</title>
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="shortcut icon" href="/images/favicon.png" />
     <link rel="apple-touch-icon" href="/images/favicon.png" />
+    <title>ContribCard</title>
+    <meta property="og:title" content="Kubernetes ContribCard" />
+    <meta property="og:description" content="Happy #kuberTENes! Check out my #FirstContribution to Kubernetes https://contribcard.clotributor.dev" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://contribcard.clotributor.dev" />
+    <meta property="og:site_name" content="Kubernetes ContribCard" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:image" content="https://contribcard.clotributor.dev/images/contribcard.png">
-    <meta name="twitter:image:src" content="https://contribcard.clotributor.dev/images/contribcard.png" />
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="https://contribcard.clotributor.dev/images/contribcard.png"/>
      <% if (isDev) { %>
       <script>
         fetch("/static/list/contributors.json")
@@ -42,7 +49,7 @@
           </div>
         </div>
         <div class="powered-text">Powered by <a class="link" href="https://github.com/cncf/contribcard" target="_blank"
-          rel="noopener noreferrer">CNCF Contribcard</a></div>
+          rel="noopener noreferrer">CNCF ContribCard</a></div>
       </div>
     </main>
     <script type="module" src="/src/index.tsx"></script>

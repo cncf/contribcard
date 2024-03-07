@@ -3,6 +3,7 @@ import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from 's
 
 import { useContributorsDataInfo, useContributorsDataList } from '../../stores/contributorsData';
 import prettifyNumber from '../../utils/prettifyNumber';
+import updateMetaTags from '../../utils/updateMetaTags';
 import HoverableItem from '../common/HoverableItem';
 import Image from '../common/Image';
 import styles from './Search.module.css';
@@ -164,6 +165,7 @@ const Search = () => {
   });
 
   onMount(() => {
+    updateMetaTags();
     setVisibleContributors(currentContributors()!);
   });
 
