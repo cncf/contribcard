@@ -1,4 +1,4 @@
-import { useLocation, useParams } from '@solidjs/router';
+import { A, useLocation, useParams } from '@solidjs/router';
 import { createSignal, JSXElement, Match, onCleanup, onMount, Show, Switch } from 'solid-js';
 
 import API from '../../api';
@@ -148,7 +148,7 @@ const ContributorCard = () => {
               </ExternalLink>
             </div>
             <div>
-              <Show when={contributor()!.contributions.by_kind[ContributionKind.COMMIT] !== undefined}>
+              <Show when={contributor()!.contributions.by_kind[ContributionKind.COMMIT] > 0}>
                 <div
                   class={styles.badge}
                   title={
@@ -167,7 +167,7 @@ const ContributorCard = () => {
                   </div>
                 </div>
               </Show>
-              <Show when={contributor()!.contributions.by_kind[ContributionKind.PR] !== undefined}>
+              <Show when={contributor()!.contributions.by_kind[ContributionKind.PR] > 0}>
                 <div
                   class={styles.badge}
                   title={
@@ -186,7 +186,7 @@ const ContributorCard = () => {
                   </div>
                 </div>
               </Show>
-              <Show when={contributor()!.contributions.by_kind[ContributionKind.ISSUE] !== undefined}>
+              <Show when={contributor()!.contributions.by_kind[ContributionKind.ISSUE] > 0}>
                 <div
                   class={styles.badge}
                   title={
@@ -253,11 +253,32 @@ const ContributorCard = () => {
             <Badges items={contributor()!.repositories} withTitle />
           </div>
 
-          <div class={`pt-0 pt-md-3 ${styles.message}`}>
+          <div class={`pt-0 pt-md-3 ${styles.buttons}`}>
             <div class="d-flex flex-row align-items-center justify-content-center">
-              <div>Thanks for your contributions!</div>
               <ShareContributorLink />
+
+              <A class={styles.blueBtn} href="/">
+                <div class="d-flex flex-row align-items-center justify-content-center">
+                  <div class={`me-2 ${styles.blueBtnIcon}`}>
+                    <svg
+                      stroke="currentColor"
+                      fill="currentColor"
+                      stroke-width="0"
+                      viewBox="0 0 576 512"
+                      height="1em"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M528 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 400H303.2c.9-4.5.8 3.6.8-22.4 0-31.8-30.1-57.6-67.2-57.6-10.8 0-18.7 8-44.8 8-26.9 0-33.4-8-44.8-8-37.1 0-67.2 25.8-67.2 57.6 0 26-.2 17.9.8 22.4H48V144h480v288zm-168-80h112c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8zm0-64h112c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8zm0-64h112c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8zm-168 96c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64z" />
+                    </svg>
+                  </div>
+                  <div>Get yours</div>
+                </div>
+              </A>
             </div>
+          </div>
+          <div class={`d-flex justify-content-center ${styles.messageWrapper}`}>
+            <div class={styles.message}>Thank you for your contributions!</div>
           </div>
         </div>
       </Show>

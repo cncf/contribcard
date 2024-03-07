@@ -8,7 +8,7 @@ export interface Contributor {
   contributions: {
     total: number;
     by_kind: {
-      [key in ContributionKind]?: number;
+      [key in ContributionKind]: number;
     };
   };
   years: number[];

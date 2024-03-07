@@ -71,10 +71,28 @@
   line-height: 1;
 }
 
-.message {
+.buttons {
   margin-top: 1rem;
-  font-size: 1rem;
   text-align: center;
+}
+
+.messageWrapper {
+  position: absolute;
+  bottom: -80px;
+  left: 0;
+  right: 0;
+  font-size: 0.65rem;
+}
+
+.message {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 3rem;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  padding: 0.2rem 0.35rem;
+  line-height: 1;
+  text-align: center;
+  font-weight: bold;
 }
 
 .firstContribContent {
@@ -110,6 +128,25 @@
   font-size: 90%;
   line-height: 90%;
   margin-right: 0.5rem;
+}
+
+.blueBtn {
+  font-size: 0.9rem;
+  font-weight: bold !important;
+  width: 145px;
+  color: #fff;
+  background-color: var(--color-1);
+  border: 2px solid var(--color-2);
+  padding: 0.2rem 0.75rem;
+  cursor: pointer;
+  text-decoration: none !important;
+}
+
+.blueBtnIcon {
+  position: relative;
+  margin-top: -2px;
+  font-size: 90%;
+  min-width: 16px;
 }
 
 @media (hover: hover) {
@@ -168,9 +205,23 @@
     line-height: 0.9;
   }
 
-  .message {
+  .buttons {
     margin-top: 1.5rem;
-    font-size: 1.35rem;
+  }
+
+  .blueBtn {
+    font-size: 1rem;
+    padding: 0.2rem 1rem;
+    width: 175px;
+  }
+
+  .messageWrapper {
+    bottom: -106px;
+  }
+
+  .message {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
   }
 }
 
@@ -213,9 +264,23 @@
     height: 80px;
   }
 
-  .message {
+  .buttons {
     margin-top: 1.5rem;
-    font-size: 1.75rem;
+  }
+
+  .blueBtn {
+    font-size: 1.2rem;
+    padding: 0.25rem 1.35rem;
+    width: 215px;
+  }
+
+  .messageWrapper {
+    bottom: -146px;
+  }
+
+  .message {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
   }
 
   .generalTitle {
@@ -255,5 +320,20 @@
 
   .subtitle span {
     font-size: 1.15rem;
+  }
+
+  .blueBtn {
+    padding: 0.2rem 0.75rem;
+    width: 135px;
+  }
+
+  .messageWrapper {
+    bottom: -73px;
+  }
+
+  .message {
+    font-size: 0.65rem;
+    line-height: 0.8rem;
+    padding: 0.2rem 0.35rem;
   }
 }
