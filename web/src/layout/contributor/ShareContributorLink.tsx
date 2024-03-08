@@ -92,8 +92,8 @@ const LinkIcon = (props: Props): JSXElement => {
   );
 };
 
-export const DESCRIPTION = `Happy #kuberTENes! Check out my #FirstContribution to Kubernetes`;
-export const HASHTAGS = ['kuberTENes', 'FirstContribution'];
+const MESSAGE = `Happy #kuberTENes! Check out my #FirstContribution to Kubernetes`;
+const HASHTAGS = ['kuberTENes', 'FirstContribution'];
 
 const ShareContributorLink = () => {
   const [visibleButtons, setVisibleButtons] = createSignal<boolean>(false);
@@ -107,16 +107,16 @@ const ShareContributorLink = () => {
     switch (k) {
       case LinkShare.X:
         url += `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-          DESCRIPTION
+          MESSAGE
         )}&url=${urlToShare}&hashtags=${HASHTAGS.join(',')}`;
         break;
       case LinkShare.Facebook:
         url += `https://www.facebook.com/sharer/sharer.php?u=${urlToShare}&hashtag=${HASHTAGS[0]}&quote=${encodeURIComponent(
-          DESCRIPTION
+          MESSAGE
         )}`;
         break;
       case LinkShare.LinkedIn:
-        url += `https://www.linkedin.com/shareArticle?url=${urlToShare}&title=${encodeURIComponent(DESCRIPTION)}&mini=true`;
+        url += `https://www.linkedin.com/shareArticle?url=${urlToShare}&title=${encodeURIComponent(MESSAGE)}&mini=true`;
         break;
       case LinkShare.WhatsApp:
         if (isMobile) {
@@ -124,15 +124,15 @@ const ShareContributorLink = () => {
         } else {
           url += 'https://web.whatsapp.com/send';
         }
-        url += `?text=${encodeURIComponent(`${DESCRIPTION} ${urlToShare}`)}`;
+        url += `?text=${encodeURIComponent(`${MESSAGE} ${urlToShare}`)}`;
         break;
       case LinkShare.Email:
         url += `mailto:?subject=${encodeURIComponent('Happy #kuberTENes!')}&body=${encodeURIComponent(
-          `${DESCRIPTION} ${urlToShare}`
+          `${MESSAGE} ${urlToShare}`
         )}`;
         break;
       case LinkShare.Reddit:
-        url += `https://www.reddit.com/submit?url=${urlToShare}&title=${encodeURIComponent(DESCRIPTION)}`;
+        url += `https://www.reddit.com/submit?url=${urlToShare}&title=${encodeURIComponent(MESSAGE)}`;
         break;
     }
 
