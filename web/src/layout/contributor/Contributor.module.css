@@ -293,6 +293,10 @@
     font-size: 0.9rem;
     line-height: 1;
   }
+
+  .badgeIcon {
+    min-width: 14px;
+  }
 }
 
 /* Only mobile */

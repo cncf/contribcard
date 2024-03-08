@@ -93,7 +93,6 @@ const LinkIcon = (props: Props): JSXElement => {
 };
 
 const MESSAGE = `Happy #kuberTENes! Check out my #FirstContribution to Kubernetes`;
-const HASHTAGS = ['kuberTENes', 'FirstContribution'];
 
 const ShareContributorLink = () => {
   const [visibleButtons, setVisibleButtons] = createSignal<boolean>(false);
@@ -106,14 +105,10 @@ const ShareContributorLink = () => {
 
     switch (k) {
       case LinkShare.X:
-        url += `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-          MESSAGE
-        )}&url=${urlToShare}&hashtags=${HASHTAGS.join(',')}`;
+        url += `https://twitter.com/intent/tweet?text=${encodeURIComponent(MESSAGE)}&url=${urlToShare}}`;
         break;
       case LinkShare.Facebook:
-        url += `https://www.facebook.com/sharer/sharer.php?u=${urlToShare}&hashtag=${HASHTAGS[0]}&quote=${encodeURIComponent(
-          MESSAGE
-        )}`;
+        url += `https://www.facebook.com/sharer/sharer.php?u=${urlToShare}&quote=${encodeURIComponent(MESSAGE)}`;
         break;
       case LinkShare.LinkedIn:
         url += `https://www.linkedin.com/shareArticle?url=${urlToShare}&title=${encodeURIComponent(MESSAGE)}&mini=true`;
