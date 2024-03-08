@@ -105,7 +105,7 @@ const ShareContributorLink = () => {
 
     switch (k) {
       case LinkShare.X:
-        url += `https://twitter.com/intent/tweet?text=${encodeURIComponent(MESSAGE)}&url=${urlToShare}}`;
+        url += `https://twitter.com/intent/tweet?text=${encodeURIComponent(MESSAGE)}&url=${urlToShare}`;
         break;
       case LinkShare.Facebook:
         url += `https://www.facebook.com/sharer/sharer.php?u=${urlToShare}&quote=${encodeURIComponent(MESSAGE)}`;
