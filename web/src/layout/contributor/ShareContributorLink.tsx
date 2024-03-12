@@ -92,7 +92,7 @@ const LinkIcon = (props: Props): JSXElement => {
   );
 };
 
-const MESSAGE = `Happy #kuberTENes! Check out my #FirstContribution to Kubernetes`;
+const MESSAGE = `Happy #kuberTENes! Check out my #FirstContribution to Kubernetes #ContribCard`;
 
 const ShareContributorLink = () => {
   const [visibleButtons, setVisibleButtons] = createSignal<boolean>(false);
