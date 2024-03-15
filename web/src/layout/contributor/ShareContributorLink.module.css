@@ -45,7 +45,6 @@
 
 .title {
   font-size: 1rem;
-  margin-bottom: 1rem;
   font-weight: 600;
   text-align: start;
 }
@@ -61,6 +60,7 @@
 
 .buttons {
   font-size: 1.5rem;
+  padding-top: 1rem;
   overflow-x: auto;
   max-width: 100%;
   margin-bottom: 0.5rem;
@@ -72,9 +72,17 @@
   line-height: 0;
   height: 2.75rem;
   width: 2.75rem;
-  color: #fff;
+  color: var(--white);
   background-color: var(--color-1);
   border: 2px solid var(--color-2);
+}
+
+.isLinkedIn {
+  display: none !important;
+}
+
+.copied {
+  background-color: var(--color-2);
 }
 
 @keyframes fadeIn {
@@ -96,7 +104,6 @@
 
   .title {
     font-size: 1.15rem;
-    margin-bottom: 1.5rem;
   }
 
   .wrapper {
@@ -114,10 +121,18 @@
     right: 1.5rem;
   }
 
+  .buttons {
+    padding-top: 1.5rem;
+  }
+
   .button {
     margin: 0 1rem 0 0;
     height: 3rem;
     width: 3rem;
+  }
+
+  .isLinkedIn {
+    display: flex !important;
   }
 }
 
@@ -131,7 +146,6 @@
 
   .title {
     font-size: 1.5rem;
-    margin-bottom: 1.5rem;
   }
 
   .wrapper {
@@ -149,10 +163,18 @@
     right: 3rem;
   }
 
+  .buttons {
+    padding-top: 1.5rem;
+  }
+
   .button {
     margin: 0 1rem 0 0;
     height: 3rem;
     width: 3rem;
+  }
+
+  .isLinkedIn {
+    display: flex !important;
   }
 }
 
