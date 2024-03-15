@@ -22,11 +22,11 @@
         .then(res => res.json())
         .then(data => window.contributors = data);
       </script>
-      <% } else { %>
+    <% } else { %>
       <script>
         window.contributors = {{ contributors }};
       </script>
-      <% } %>
+    <% } %>
   </head>
   <body>
     <main class="d-flex flex-column align-items-center justify-content-center">
