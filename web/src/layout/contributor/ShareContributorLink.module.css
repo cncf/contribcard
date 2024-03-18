@@ -77,7 +77,7 @@
   border: 2px solid var(--color-2);
 }
 
-.isLinkedIn {
+.isMobileHidden {
   display: none !important;
 }
 
@@ -131,7 +131,7 @@
     width: 3rem;
   }
 
-  .isLinkedIn {
+  .isMobileHidden {
     display: flex !important;
   }
 }
@@ -173,7 +173,7 @@
     width: 3rem;
   }
 
-  .isLinkedIn {
+  .isMobileHidden {
     display: flex !important;
   }
 }

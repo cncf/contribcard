@@ -129,7 +129,7 @@ const ShareContributorLink = () => {
         url += `https://www.facebook.com/sharer/sharer.php?u=${urlToShare}&quote=${encodeURIComponent(MESSAGE)}`;
         break;
       case LinkShare.LinkedIn:
-        url += `https://www.linkedin.com/shareArticle?url=${urlToShare}&title=${encodeURIComponent(MESSAGE)}&mini=true`;
+        url += `https://www.linkedin.com/sharing/share-offsite/?url=${urlToShare}`;
         break;
       case LinkShare.WhatsApp:
         if (isMobile) {
@@ -236,7 +236,7 @@ const ShareContributorLink = () => {
                       onClick={() => (isCopy ? copyToClipboard() : clickSocialIcon(s))}
                       class={`d-flex flex-row align-items-center justify-content-center ${styles.button}`}
                       classList={{
-                        [styles.isLinkedIn]: s === LinkShare.LinkedIn,
+                        [styles.isMobileHidden]: s === LinkShare.Reddit,
                         [styles.copied]: copyStatus() && isCopy,
                       }}
                     >
