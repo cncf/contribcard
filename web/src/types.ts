@@ -33,9 +33,9 @@ export enum ContributionKind {
 export enum LinkShare {
   X = 'x',
   Facebook = 'facebook',
-  Reddit = 'reddit',
-  WhatsApp = 'whatsapp',
   LinkedIn = 'linkedin',
+  WhatsApp = 'whatsapp',
+  Reddit = 'reddit',
   Email = 'email',
   Copy = 'copy',
 }
