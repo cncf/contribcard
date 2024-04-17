@@ -1,0 +1,6 @@
+# OpenWallet Foundation settings file
+
+# List of GitHub organizations to scan for contributions
+organizations:
+  - openwallet-foundation
+  - openwallet-foundation-labs

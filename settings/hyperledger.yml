@@ -1,0 +1,9 @@
+# Hyperledger settings file
+
+# List of GitHub organizations to scan for contributions
+organizations:
+  - hyperledger
+  - Hyperledger-India
+  - Hyperledger-TWGC
+  - hyperledger-archives
+  - hyperledger-labs

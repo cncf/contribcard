@@ -1,0 +1,7 @@
+# Post-Quantum Cryptography Alliance settings file
+
+# List of GitHub organizations to scan for contributions
+organizations:
+  - PQCA
+  - pq-code-package
+  - open-quantum-safe
