@@ -179,7 +179,7 @@
 }
 
 /* Only mobile */
-@media (pointer: none), (pointer: coarse) {
+@media (pointer: coarse) and (min-width: 768px) and (max-width: 1023.98px) and (max-height: 1000px) {
   .shareBtn {
     padding: 0.2rem 0.75rem;
     width: 135px;
