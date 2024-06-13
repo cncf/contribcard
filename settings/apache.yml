@@ -1,0 +1,5 @@
+# Kubernetes settings file
+
+# List of GitHub organizations to scan for contributions
+organizations:
+  - apache
