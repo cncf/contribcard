@@ -18,6 +18,7 @@ use std::{
 };
 use tempfile::NamedTempFile;
 use tracing::{debug, instrument, trace};
+use crate::build::settings::Settings;
 
 /// GitHub API base url.
 const API_BASE_URL: &str = "https://api.github.com";
@@ -60,13 +61,17 @@ impl Collector {
     /// Collect contributions (commits, issues, prs) from GitHub for each of
     /// the repositories in the GitHub organizations provided.
     #[instrument(skip(self))]
-    pub(crate) async fn collect_contributions(&self, orgs: &[String]) -> Result<()> {
+    pub(crate) async fn collect_contributions(&self, settings: &Settings) -> Result<()> {
         debug!("collecting contributions");
 
         // Fetch organizations' repositories
         let mut repositories = vec![];
-        for org in orgs {
+        for org in settings.organizations.iter() {
             repositories.extend(self.list_repositories(org).await?);
+        }
+        for repo in settings.repositories.iter() {
+            let pair = repo.splitn(2, '/').collect::<Vec<&str>>();
+            repositories.push((pair[0].to_string(), pair[1].to_string()));
         }
 
         // Collect contributions from each repository
