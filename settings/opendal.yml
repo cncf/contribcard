@@ -1,5 +1,0 @@
-# Apache OpenDAL settings file
-
-# List of GitHub organizations to scan for contributions
-repositories:
-  - apache/opendal

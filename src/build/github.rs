@@ -1,7 +1,7 @@
 //! This module is in charge of collecting contributions from GitHub.
 
 use crate::build::db;
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, ensure, Context, Result};
 use chrono::DateTime;
 use deadpool::unmanaged::{Object, Pool};
 use duckdb::{AccessMode, Config, OptionalExt};
@@ -71,6 +71,9 @@ impl Collector {
         }
         for repo in settings.repositories.iter() {
             let pair = repo.splitn(2, '/').collect::<Vec<&str>>();
+            ensure!(pair.len() == 2, "repository format must be owner/repo, found: {repo}");
+            ensure!(!pair[0].contains("/"), "owner cannot contain a slash, found: {}", pair[0]);
+            ensure!(!pair[1].contains("/"), "repo cannot contain a slash, found: {}", pair[1]);
             repositories.push((pair[0].to_string(), pair[1].to_string()));
         }
 
