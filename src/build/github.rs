@@ -1,7 +1,8 @@
 //! This module is in charge of collecting contributions from GitHub.
 
 use crate::build::db;
-use anyhow::{bail, Context, Result};
+use crate::build::settings::Settings;
+use anyhow::{bail, ensure, Context, Result};
 use chrono::DateTime;
 use deadpool::unmanaged::{Object, Pool};
 use duckdb::{AccessMode, Config, OptionalExt};
@@ -60,13 +61,21 @@ impl Collector {
     /// Collect contributions (commits, issues, prs) from GitHub for each of
     /// the repositories in the GitHub organizations provided.
     #[instrument(skip(self))]
-    pub(crate) async fn collect_contributions(&self, orgs: &[String]) -> Result<()> {
+    pub(crate) async fn collect_contributions(&self, settings: &Settings) -> Result<()> {
         debug!("collecting contributions");
 
         // Fetch organizations' repositories
         let mut repositories = vec![];
-        for org in orgs {
+        for org in &settings.organizations {
             repositories.extend(self.list_repositories(org).await?);
+        }
+        for repo in &settings.repositories {
+            let pair = repo.split('/').collect::<Vec<&str>>();
+            ensure!(
+                pair.len() == 2,
+                "repository format must be owner/repo, found: {repo}"
+            );
+            repositories.push((pair[0].to_string(), pair[1].to_string()));
         }
 
         // Collect contributions from each repository

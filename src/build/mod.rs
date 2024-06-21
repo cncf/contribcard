@@ -41,7 +41,7 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     // Collect contributions from GitHub
     if args.collect_contributions.unwrap_or(true) {
         let collector = github::Collector::new(&cache_db_file)?;
-        collector.collect_contributions(&settings.organizations).await?;
+        collector.collect_contributions(&settings).await?;
     }
     let contribs_db = prepare_contributions_table(&cache_db_file)?;
 

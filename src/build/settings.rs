@@ -7,7 +7,10 @@ use std::{fs::File, path::Path};
 /// ContribCard settings.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub(crate) struct Settings {
+    #[serde(default)]
     pub organizations: Vec<String>,
+    #[serde(default)]
+    pub repositories: Vec<String>,
 }
 
 impl Settings {
