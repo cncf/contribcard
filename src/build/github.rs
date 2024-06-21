@@ -1,6 +1,7 @@
 //! This module is in charge of collecting contributions from GitHub.
 
 use crate::build::db;
+use crate::build::settings::Settings;
 use anyhow::{bail, ensure, Context, Result};
 use chrono::DateTime;
 use deadpool::unmanaged::{Object, Pool};
@@ -18,7 +19,6 @@ use std::{
 };
 use tempfile::NamedTempFile;
 use tracing::{debug, instrument, trace};
-use crate::build::settings::Settings;
 
 /// GitHub API base url.
 const API_BASE_URL: &str = "https://api.github.com";
@@ -71,7 +71,10 @@ impl Collector {
         }
         for repo in &settings.repositories {
             let pair = repo.split('/').collect::<Vec<&str>>();
-            ensure!(pair.len() == 2, "repository format must be owner/repo, found: {repo}");
+            ensure!(
+                pair.len() == 2,
+                "repository format must be owner/repo, found: {repo}"
+            );
             repositories.push((pair[0].to_string(), pair[1].to_string()));
         }
 
