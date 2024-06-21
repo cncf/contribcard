@@ -66,14 +66,14 @@ impl Collector {
 
         // Fetch organizations' repositories
         let mut repositories = vec![];
-        for org in settings.organizations.iter() {
+        for org in &settings.organizations {
             repositories.extend(self.list_repositories(org).await?);
         }
-        for repo in settings.repositories.iter() {
+        for repo in &settings.repositories {
             let pair = repo.splitn(2, '/').collect::<Vec<&str>>();
             ensure!(pair.len() == 2, "repository format must be owner/repo, found: {repo}");
-            ensure!(!pair[0].contains("/"), "owner cannot contain a slash, found: {}", pair[0]);
-            ensure!(!pair[1].contains("/"), "repo cannot contain a slash, found: {}", pair[1]);
+            ensure!(!pair[0].contains('/'), "owner cannot contain a slash, found: {}", pair[0]);
+            ensure!(!pair[1].contains('/'), "repo cannot contain a slash, found: {}", pair[1]);
             repositories.push((pair[0].to_string(), pair[1].to_string()));
         }
 
