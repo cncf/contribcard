@@ -12,7 +12,16 @@ use tracing::{info, instrument};
 #[instrument(skip_all)]
 pub(crate) async fn serve(args: &ServeArgs) -> Result<()> {
     // Setup router
-    let content = args.content_dir.clone().unwrap_or(env::current_dir()?);
+    let content = if let Some(dir) = args.content_dir.clone() {
+        dir
+    } else {
+        let dir = env::current_dir()?;
+        info!(
+            "using current directory as content directory: {:?}",
+            dir.display()
+        );
+        dir
+    };
     let index_path = content.join("index.html");
     let router: Router<()> = Router::new().nest_service(
         "/",
