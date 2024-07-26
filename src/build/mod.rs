@@ -236,9 +236,7 @@ struct BaseCacheDB {
 impl BaseCacheDB {
     /// Create a new BaseCacheDB instance from the build arguments provided.
     fn new(args: &BuildArgs) -> Option<Self> {
-        let Some(url) = args.base_cache_db_url.as_ref() else {
-            return None;
-        };
+        let url = args.base_cache_db_url.as_ref()?;
 
         Some(Self {
             url: url.clone(),
