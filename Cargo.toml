@@ -4,39 +4,39 @@ description = "ContribCard CLI tool"
 version = "0.1.0"
 license = "Apache-2.0"
 edition = "2021"
-rust-version = "1.76"
+rust-version = "1.81"
 repository = "https://github.com/cncf/contribcard"
 readme = "README.md"
 authors = ["Sergio Castaño Arteaga", "Cintia Sanchez Garcia"]
 
 [dependencies]
-anyhow = "1.0.86"
+anyhow = "1.0.88"
 askama = { version = "0.12.1", features = ["serde-json"] }
-aws-config = "1.5.4"
-aws-sdk-s3 = "1.42.0"
+aws-config = "1.5.6"
+aws-sdk-s3 = "1.49.0"
 axum = "0.7.5"
 chrono = "0.4.38"
-clap = { version = "4.5.11", features = ["derive"] }
+clap = { version = "4.5.17", features = ["derive"] }
 deadpool = "0.12.1"
 dirs = "5.0.1"
 duckdb = { version = "1.0.0", features = ["json"] }
 futures = "0.3.30"
 md-5 = "0.10.6"
 mime_guess = "2.0.5"
-parse_link_header = "0.3.3"
-reqwest = { version = "0.12.5", features = ["json"] }
+parse_link_header = "0.4.0"
+reqwest = { version = "0.12.7", features = ["json"] }
 rust-embed = "8.5.0"
-serde = { version = "1.0.204", features = ["derive"] }
-serde_json = "1.0.120"
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = "1.0.128"
 serde_yaml = "0.9.34"
-tempfile = "3.10.1"
-tokio = { version = "1.39.1", features = ["macros", "rt-multi-thread", "signal"] }
-tower = "0.4.13"
+tempfile = "3.12.0"
+tokio = { version = "1.40.0", features = ["macros", "rt-multi-thread", "signal"] }
+tower = "0.5.1"
 tower-http = { version = "0.5.2", features = ["fs", "set-header"] }
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
 walkdir = "2.5.0"
 
 [build-dependencies]
-anyhow = "1.0.86"
-which = "6.0.1"
+anyhow = "1.0.88"
+which = "6.0.3"
