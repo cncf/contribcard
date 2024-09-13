@@ -11,7 +11,7 @@ WORKDIR /contribcard/src
 RUN cargo build --release
 
 # Final stage
-FROM alpine:3.20.2
+FROM alpine:3.20.3
 RUN addgroup -S contribcard && adduser -S contribcard -G contribcard
 USER contribcard
 WORKDIR /home/contribcard
