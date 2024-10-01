@@ -89,26 +89,30 @@ SELECT
         'login', author_login,
         'contributions', (
             SELECT json_object(
-                'total', count(contribution_parent),
+                'total', (
+                    SELECT count(*)
+                    FROM contribution
+                    WHERE author_id = contributor.author_id
+                ),
                 'by_kind', (
                     SELECT json_object(
                         'commit', (
                             SELECT count(*)
                             FROM contribution
                             WHERE kind = 'commit'
-                            AND author_id = contribution_parent.author_id
+                            AND author_id = contributor.author_id
                         ),
                         'issue', (
                             SELECT count(*)
                             FROM contribution
                             WHERE kind = 'issue'
-                            AND author_id = contribution_parent.author_id
+                            AND author_id = contributor.author_id
                         ),
                         'pull_request', (
                             SELECT count(*)
                             FROM contribution
                             WHERE kind = 'pull_request'
-                            AND author_id = contribution_parent.author_id
+                            AND author_id = contributor.author_id
                         )
                     )
                 )
@@ -122,11 +126,15 @@ SELECT
             FROM (
                 SELECT DISTINCT owner, repository, count(*) AS total
                 FROM contribution
-                WHERE author_id = contribution_parent.author_id
+                WHERE author_id = contributor.author_id
                 GROUP BY owner, repository
             )
         ),
-        'years', list_reverse_sort(list(DISTINCT extract('year' FROM ts))),
+        'years', (
+            SELECT list_reverse_sort(list(DISTINCT extract('year' FROM ts)))
+            FROM contribution
+            WHERE author_id = contributor.author_id
+        ),
         'first_contribution', (
             SELECT json_object(
                 'kind', kind,
@@ -137,23 +145,26 @@ SELECT
                 'title', title,
                 'ts', extract('epoch' FROM ts)::BIGINT
             ) FROM contribution
-            WHERE author_id = contribution_parent.author_id
+            WHERE author_id = contributor.author_id
             ORDER BY ts ASC, owner ASC, repository ASC, title ASC, number ASC, sha ASC
             LIMIT 1
         )
     ) AS summary
-FROM contribution contribution_parent
-GROUP BY author_id, author_login;
+FROM (
+    SELECT author_id, first(author_login ORDER BY ts DESC) as author_login
+    FROM contribution
+    GROUP BY author_id
+) AS contributor
 ";
 
 /// Get the id and login of all contributors.
 pub(crate) const GET_CONTRIBUTORS: &str = "
-WITH contributors AS (
-    SELECT DISTINCT author_id AS id, author_login AS login
-    FROM contribution
-)
 SELECT json_group_object(login, id)
-FROM contributors;
+FROM (
+    SELECT author_id AS id, first(author_login ORDER BY ts DESC) AS login
+    FROM contribution
+    GROUP BY author_id
+) AS contributor;
 ";
 
 /// Get last commit timestamp.
