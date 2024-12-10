@@ -33,9 +33,9 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
 
     // Initial setup
     let settings = Settings::new(&args.settings_file)?;
-    let cache_dir = setup_cache_dir(&args.cache_dir)?;
+    let cache_dir = setup_cache_dir(args.cache_dir.as_ref())?;
     let base_cache_db = BaseCacheDB::new(args);
-    let cache_db_file = setup_cache_db(&cache_dir, &args.name, &base_cache_db).await?;
+    let cache_db_file = setup_cache_db(&cache_dir, &args.name, base_cache_db.as_ref()).await?;
     setup_output_dir(&args.output_dir)?;
 
     // Collect contributions from GitHub
@@ -148,7 +148,7 @@ fn render_index(output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<(
 pub(crate) async fn setup_cache_db(
     cache_dir: &Path,
     name: &str,
-    base_db: &Option<BaseCacheDB>,
+    base_db: Option<&BaseCacheDB>,
 ) -> Result<String> {
     debug!("setting up cache database");
 
@@ -187,7 +187,7 @@ pub(crate) async fn setup_cache_db(
 /// Setup cache directory. If none is provided, we'll setup one based on the
 /// user's cache directory.
 #[instrument(err)]
-fn setup_cache_dir(cache_dir: &Option<PathBuf>) -> Result<PathBuf> {
+fn setup_cache_dir(cache_dir: Option<&PathBuf>) -> Result<PathBuf> {
     debug!("setting up cache directory");
 
     let cache_dir = match cache_dir {
