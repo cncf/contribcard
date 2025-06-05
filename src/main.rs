@@ -1,12 +1,13 @@
 #![warn(clippy::all, clippy::pedantic)]
 #![allow(clippy::doc_markdown)]
 
+use std::path::PathBuf;
+
 use anyhow::Result;
 use build::build;
 use clap::{Args, Parser, Subcommand};
 use deploy::s3;
 use serve::serve;
-use std::path::PathBuf;
 
 mod build;
 mod deploy;
@@ -132,11 +133,9 @@ async fn main() -> Result<()> {
     // Run command
     match &cli.command {
         Command::Build(args) => build(args).await?,
-        Command::Deploy(args) => {
-            match &args.provider {
-                Provider::S3(args) => s3::deploy(args).await?,
-            };
-        }
+        Command::Deploy(args) => match &args.provider {
+            Provider::S3(args) => s3::deploy(args).await?,
+        },
         Command::Serve(args) => serve(args).await?,
     }
 

@@ -1,8 +1,9 @@
 //! This module defines the types used to represent the contribcard settings.
 
+use std::{fs::File, path::Path};
+
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use std::{fs::File, path::Path};
 
 /// ContribCard settings.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
