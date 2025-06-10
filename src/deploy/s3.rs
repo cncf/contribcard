@@ -1,20 +1,24 @@
 //! This module defines the functionality of the deploy CLI subcommand for the
 //! AWS S3 provider.
 
-use crate::S3Args;
+use std::{
+    collections::HashMap,
+    env,
+    fmt::Write,
+    fs,
+    path::{Path, PathBuf},
+    time::Instant,
+};
+
 use anyhow::{bail, format_err, Context, Result};
 use aws_sdk_s3::primitives::ByteStream;
 use futures::stream::{self, StreamExt};
 use md5::{Digest, Md5};
 use mime_guess::mime;
-use std::{
-    collections::HashMap,
-    env, fs,
-    path::{Path, PathBuf},
-    time::Instant,
-};
 use tracing::{debug, info, instrument};
 use walkdir::WalkDir;
+
+use crate::S3Args;
 
 /// File name of the index document.
 const INDEX_DOCUMENT: &str = "index.html";
@@ -178,7 +182,7 @@ async fn upload_objects(
     for result in results {
         if let Err(err) = result {
             errors_found = true;
-            errors.push_str(&format!("- {err:?}\n"));
+            writeln!(&mut errors, "- {err:?}")?;
         }
     }
     if errors_found {

@@ -1,5 +1,5 @@
 # Build CLI tool
-FROM rust:1-alpine3.21 as builder
+FROM rust:1-alpine3.22 as builder
 RUN apk --no-cache add musl-dev perl make libconfig-dev openssl-dev yarn g++ cmake openssl-libs-static git ninja
 WORKDIR /contribcard
 COPY src src
@@ -11,7 +11,7 @@ WORKDIR /contribcard/src
 RUN cargo build --release
 
 # Final stage
-FROM alpine:3.21.3
+FROM alpine:3.22.0
 RUN addgroup -S contribcard && adduser -S contribcard -G contribcard
 USER contribcard
 WORKDIR /home/contribcard

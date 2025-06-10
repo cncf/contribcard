@@ -1,0 +1,11 @@
+# My ContribCard site settings file
+
+# List of GitHub organizations to scan for contributions (case sensitive).
+organizations:
+  - org1
+  - org2
+
+# List of GitHub repositories to scan for contributions (owner/repo format, case sensitive).
+repositories:
+  - owner1/repo1
+  - owner2/repo2

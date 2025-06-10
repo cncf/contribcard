@@ -1,7 +1,12 @@
 //! This module is in charge of collecting contributions from GitHub.
 
-use crate::build::db;
-use crate::build::settings::Settings;
+use std::{
+    env,
+    fmt::Write,
+    io::{Seek, SeekFrom, Write as IoWrite},
+    sync::{Arc, Mutex},
+};
+
 use anyhow::{bail, ensure, Context, Result};
 use chrono::DateTime;
 use deadpool::unmanaged::{Object, Pool};
@@ -12,13 +17,11 @@ use reqwest::{
     StatusCode,
 };
 use serde_json::Value;
-use std::{
-    env,
-    io::{Seek, SeekFrom, Write},
-    sync::{Arc, Mutex},
-};
 use tempfile::NamedTempFile;
 use tracing::{debug, instrument, trace};
+
+use crate::build::db;
+use crate::build::settings::Settings;
 
 /// GitHub API base url.
 const API_BASE_URL: &str = "https://api.github.com";
@@ -60,7 +63,7 @@ impl Collector {
 
     /// Collect contributions (commits, issues, prs) from GitHub for each of
     /// the repositories in the GitHub organizations provided.
-    #[instrument(skip(self))]
+    #[instrument(skip(self, settings))]
     pub(crate) async fn collect_contributions(&self, settings: &Settings) -> Result<()> {
         debug!("collecting contributions");
 
@@ -117,10 +120,13 @@ impl Collector {
             let v: Value = serde_json::from_reader(&body)?;
             if let Some(repos) = v.as_array() {
                 for repo in repos {
-                    repositories.push((
-                        org.to_string(),
-                        repo["name"].as_str().expect("name to be a string").to_string(),
-                    ));
+                    let is_fork = repo["fork"].as_bool().expect("fork to be a boolean");
+                    if !is_fork {
+                        repositories.push((
+                            org.to_string(),
+                            repo["name"].as_str().expect("name to be a string").to_string(),
+                        ));
+                    }
                 }
             }
 
@@ -146,7 +152,7 @@ impl Collector {
         // Build first page url
         let mut url = format!("{API_BASE_URL}/repos/{owner}/{repo}/commits?per_page=100");
         if let Some(ts) = self.last_timestamp(db::GET_LAST_COMMIT_TS, &[&owner, &repo])? {
-            url.push_str(&format!("&since={ts}"));
+            write!(url, "&since={ts}")?;
         }
 
         // Fetch commits pages until there are no more available
@@ -196,7 +202,7 @@ impl Collector {
         // Build first page url
         let mut url = format!("{API_BASE_URL}/repos/{owner}/{repo}/issues?state=all&per_page=100");
         if let Some(ts) = self.last_timestamp(db::GET_LAST_ISSUE_OR_PULL_REQUEST_TS, &[&owner, &repo])? {
-            url.push_str(&format!("&since={ts}"));
+            write!(url, "&since={ts}")?;
         }
 
         // Fetch issues pages until there are no more available
@@ -248,6 +254,8 @@ impl Collector {
     /// with the body content (unless it's empty).
     #[instrument(skip(self), err)]
     async fn fetch_page(&self, url: &str) -> Result<(HeaderMap, Option<NamedTempFile>)> {
+        trace!("fetching page: {url}");
+
         // Get an http client from the pool and do the request
         let client = self.http_clients.get().await?;
         let response = client.get(url).send().await?;
@@ -276,6 +284,7 @@ impl Collector {
             .expect("x-ratelimit-remaining header value to be an integer")
             <= MIN_RATELIMIT_REMAINING
         {
+            trace!("token is about to reach the rate limit, removing client from pool");
             let _ = Object::take(client);
         }
 

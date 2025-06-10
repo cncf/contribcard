@@ -1,16 +1,18 @@
 //! This module defines the functionality of the build CLI subcommand.
 
-use crate::{build::settings::Settings, BuildArgs};
-use anyhow::{bail, Context, Result};
-use askama::Template;
-use rust_embed::RustEmbed;
 use std::{
     fs::{self, File},
     io::Write,
     path::{Path, PathBuf},
     time::Instant,
 };
+
+use anyhow::{bail, Context, Result};
+use askama::Template;
+use rust_embed::RustEmbed;
 use tracing::{debug, info, instrument};
+
+use crate::{build::settings::Settings, BuildArgs};
 
 mod db;
 mod github;

@@ -1,12 +1,14 @@
 //! This module defines the functionality of the serve CLI subcommand.
 
-use crate::ServeArgs;
-use anyhow::Result;
-use axum::Router;
 use std::{env, net::SocketAddr};
+
+use anyhow::Result;
+use axum::{routing::get_service, Router};
 use tokio::{net::TcpListener, signal};
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::{info, instrument};
+
+use crate::ServeArgs;
 
 /// Serve contribcard website.
 #[instrument(skip_all)]
@@ -23,10 +25,9 @@ pub(crate) async fn serve(args: &ServeArgs) -> Result<()> {
         dir
     };
     let index_path = content.join("index.html");
-    let router: Router<()> = Router::new().nest_service(
-        "/",
+    let router: Router<()> = Router::new().fallback(get_service(
         ServeDir::new(&content).not_found_service(ServeFile::new(&index_path)),
-    );
+    ));
 
     // Setup and launch HTTP server
     let addr: SocketAddr = args.addr.parse()?;
@@ -37,7 +38,7 @@ pub(crate) async fn serve(args: &ServeArgs) -> Result<()> {
         axum::serve(listener, router).with_graceful_shutdown(shutdown_signal()).await?;
     } else {
         axum::serve(listener, router).await?;
-    };
+    }
 
     Ok(())
 }

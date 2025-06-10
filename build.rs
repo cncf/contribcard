@@ -1,5 +1,6 @@
-use anyhow::{bail, Result};
 use std::process::Command;
+
+use anyhow::{bail, Result};
 use which::which;
 
 fn main() -> Result<()> {
