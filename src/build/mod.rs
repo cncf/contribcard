@@ -301,13 +301,13 @@ mod filters {
     use reqwest::Url;
 
     /// Filter to get file name of the url provided.
-    pub(crate) fn file_name(url: &Url, _: &dyn askama::Values) -> askama::Result<String> {
-        let err = "invalid url";
+    pub(crate) fn file_name(url: &str, _: &dyn askama::Values) -> askama::Result<String> {
+        let url = Url::parse(url).map_err(|err| askama::Error::Custom(err.into()))?;
         let file_name = url
             .path_segments()
-            .ok_or(askama::Error::Custom(anyhow!(err).into()))?
+            .ok_or(askama::Error::Custom(anyhow!("invalid url").into()))?
             .next_back()
-            .ok_or(askama::Error::Custom(anyhow!(err).into()))?;
+            .ok_or(askama::Error::Custom(anyhow!("invalid url").into()))?;
         Ok(file_name.to_string())
     }
 }
