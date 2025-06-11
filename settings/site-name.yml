@@ -12,6 +12,7 @@ repositories:
 
 # Theme settings (required).
 theme:
+  base_url: "https://contribcard.clotributor.dev"
   email_subject: "Happy #cTENcf!"
   favicon_url: "https://raw.githubusercontent.com/cncf/contribcard-sites/refs/heads/main/cncf/favicon.png"
   logo_url: "https://raw.githubusercontent.com/cncf/contribcard-sites/refs/heads/main/cncf/logo.png"

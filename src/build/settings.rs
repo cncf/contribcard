@@ -28,6 +28,7 @@ impl Settings {
 /// Theme settings.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct Theme {
+    pub base_url: String,
     pub email_subject: String,
     pub favicon_url: String,
     pub logo_url: String,
