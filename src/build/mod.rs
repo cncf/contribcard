@@ -12,7 +12,10 @@ use askama::Template;
 use rust_embed::RustEmbed;
 use tracing::{debug, info, instrument};
 
-use crate::{build::settings::Settings, BuildArgs};
+use crate::{
+    build::settings::{Settings, Theme},
+    BuildArgs,
+};
 
 mod db;
 mod github;
@@ -51,7 +54,9 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     generate_contributors_data_files(&args.output_dir, &contribs_db)?;
 
     // Render index file and write it to the output directory
-    render_index(&args.output_dir, &contribs_db)?;
+    render_index(&settings.theme, &args.output_dir, &contribs_db)?;
+
+    // Download and copy theme images to the output directory
 
     // Copy web assets files to the output directory
     copy_web_assets(&args.output_dir)?;
@@ -126,20 +131,21 @@ fn prepare_contributions_table(cache_db_file: &str) -> Result<duckdb::Connection
 /// Template for the index document.
 #[derive(Debug, Clone, Template)]
 #[template(path = "index.html", escape = "none")]
-struct Index {
+struct Index<'a> {
     contributors: String,
+    theme: &'a Theme,
 }
 
 /// Render index file and write it to the output directory.
 #[instrument(skip_all, err)]
-fn render_index(output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
+fn render_index(theme: &Theme, output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
     debug!("rendering index.html file");
 
     // Get contributors from cache database
     let contributors: String = contribs_db.query_row(db::GET_CONTRIBUTORS, [], |row| row.get(0))?;
 
     // Prepare index, render it and write it to output dir
-    let index = Index { contributors }.render()?;
+    let index = Index { contributors, theme }.render()?;
     File::create(output_dir.join("index.html"))?.write_all(index.as_bytes())?;
 
     Ok(())

@@ -1,11 +1,21 @@
 # My ContribCard site settings file
 
-# List of GitHub organizations to scan for contributions (case sensitive).
+# List of GitHub organizations to scan for contributions (optional).
 organizations:
   - org1
   - org2
 
-# List of GitHub repositories to scan for contributions (owner/repo format, case sensitive).
+# List of GitHub repositories to scan for contributions (optional).
 repositories:
   - owner1/repo1
   - owner2/repo2
+
+# Theme settings (required).
+theme:
+  email_subject: "Happy #cTENcf!"
+  favicon_url: "https://raw.githubusercontent.com/cncf/contribcard-sites/refs/heads/main/cncf/favicon.png"
+  logo_url: "https://raw.githubusercontent.com/cncf/contribcard-sites/refs/heads/main/cncf/logo.png"
+  og_description: "Happy #cTENcf!"
+  og_image_url: "https://raw.githubusercontent.com/cncf/contribcard-sites/refs/heads/main/cncf/og_image.png"
+  og_title: "CNCF ContribCard"
+  social_message: "Happy #cTENcf! Check out my #FirstContribution to CNCF projects #ContribCard #CNCF10"

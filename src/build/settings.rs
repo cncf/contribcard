@@ -6,12 +6,13 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 /// ContribCard settings.
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct Settings {
     #[serde(default)]
     pub organizations: Vec<String>,
     #[serde(default)]
     pub repositories: Vec<String>,
+    pub theme: Theme,
 }
 
 impl Settings {
@@ -22,4 +23,16 @@ impl Settings {
 
         Ok(settings)
     }
+}
+
+/// Theme settings.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct Theme {
+    pub email_subject: String,
+    pub favicon_url: String,
+    pub logo_url: String,
+    pub og_description: String,
+    pub og_image_url: String,
+    pub og_title: String,
+    pub social_message: String,
 }
