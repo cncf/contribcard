@@ -9,6 +9,7 @@ use std::{
 
 use anyhow::{bail, Context, Result};
 use askama::Template;
+use reqwest::{StatusCode, Url};
 use rust_embed::RustEmbed;
 use tracing::{debug, info, instrument};
 
@@ -23,6 +24,9 @@ mod settings;
 
 /// Path where the data files will be written to in the output directory.
 const DATA_PATH: &str = "data";
+
+/// Path where some images will be written to in the output directory.
+const IMAGES_PATH: &str = "images";
 
 /// Embed web application assets into binary.
 /// (these assets will be built automatically from the build script)
@@ -57,12 +61,48 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     render_index(&settings.theme, &args.output_dir, &contribs_db)?;
 
     // Download and copy theme images to the output directory
+    copy_theme_images(&settings.theme, &args.output_dir).await?;
 
     // Copy web assets files to the output directory
     copy_web_assets(&args.output_dir)?;
 
     let duration = start.elapsed().as_secs_f64();
     info!("contribcard website built! (took: {:.3}s)", duration);
+    Ok(())
+}
+
+/// Copy theme images to the output directory.
+#[instrument(skip(theme), err)]
+async fn copy_theme_images(theme: &Theme, output_dir: &Path) -> Result<()> {
+    // Helper function to download an image to the output directory
+    async fn download_image(url: &str, output_dir: &Path) -> Result<()> {
+        // Fetch image
+        let resp = reqwest::get(url).await.context(format!("error downloading image ({url})"))?;
+        if resp.status() != StatusCode::OK {
+            bail!(
+                "unexpected status ({}) code downloading image ({url})",
+                resp.status()
+            );
+        }
+        let img = resp.bytes().await?;
+
+        // Write image to output dir
+        let url = Url::parse(url).context("invalid image url")?;
+        let Some(file_name) = url.path_segments().and_then(Iterator::last) else {
+            bail!("invalid image url: {url}");
+        };
+        let img_path = Path::new(IMAGES_PATH).join(file_name);
+        File::create(output_dir.join(&img_path))?.write_all(&img)?;
+
+        Ok(())
+    }
+
+    debug!("copying theme images to output directory");
+
+    download_image(&theme.favicon_url, output_dir).await.context("favicon")?;
+    download_image(&theme.logo_url, output_dir).await.context("logo")?;
+    download_image(&theme.og_image_url, output_dir).await.context("og_image")?;
+
     Ok(())
 }
 
@@ -225,9 +265,11 @@ fn setup_output_dir(output_dir: &Path) -> Result<()> {
         fs::create_dir_all(output_dir)?;
     }
 
-    let data_path = output_dir.join(DATA_PATH);
-    if !data_path.exists() {
-        fs::create_dir(data_path)?;
+    for path in &[DATA_PATH, IMAGES_PATH] {
+        let path = output_dir.join(path);
+        if !path.exists() {
+            fs::create_dir(path)?;
+        }
     }
 
     Ok(())
