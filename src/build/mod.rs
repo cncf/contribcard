@@ -295,3 +295,19 @@ impl BaseCacheDB {
         })
     }
 }
+
+mod filters {
+    use anyhow::anyhow;
+    use reqwest::Url;
+
+    /// Filter to get file name of the url provided.
+    pub(crate) fn file_name(url: &Url, _: &dyn askama::Values) -> askama::Result<String> {
+        let err = "invalid url";
+        let file_name = url
+            .path_segments()
+            .ok_or(askama::Error::Custom(anyhow!(err).into()))?
+            .next_back()
+            .ok_or(askama::Error::Custom(anyhow!(err).into()))?;
+        Ok(file_name.to_string())
+    }
+}
