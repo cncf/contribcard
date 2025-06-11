@@ -1,57 +1,71 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/styles/common.css">
-    <link rel="shortcut icon" href="/images/favicon.png" />
-    <link rel="apple-touch-icon" href="/images/favicon.png" />
-    <title>ContribCard</title>
-    <meta property="og:title" content="Kubernetes ContribCard" />
-    <meta property="og:description" content="Happy #kuberTENes!" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://contribcard.clotributor.dev" />
-    <meta property="og:site_name" content="Kubernetes ContribCard" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="https://contribcard.clotributor.dev/images/contribcard.png">
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:image" content="https://contribcard.clotributor.dev/images/contribcard.png"/>
-     <% if (isDev) { %>
-      <script>
+    {% let favicon = theme.favicon_url|file_name %}
+    {% let og_image = theme.og_image_url|file_name %}
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/styles/common.css">
+        <link rel="shortcut icon" href="/images/{{ favicon }}" />
+        <link rel="apple-touch-icon" href="/images/{{ favicon }}" />
+        <title>{{ theme.og_title }}</title>
+        <meta property="og:title" content="{{ theme.og_title }}" />
+        <meta property="og:description" content="{{ theme.og_description }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://contribcard.clotributor.dev" />
+        <meta property="og:site_name" content="{{ theme.og_title }}" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:image"
+              content="{{ theme.base_url }}/images/{{ og_image }}" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image"
+              content="{{ theme.base_url }}/images/{{ og_image }}" />
+        <% if (isDev) { %>
+        <script>
         fetch("/static/list/contributors.json")
         .then(res => res.json())
         .then(data => window.contributors = data);
-      </script>
-    <% } else { %>
-      <script>
+        window.email_subject = "Happy #cTENcf!";
+        window.social_message = "Happy #cTENcf! Check out my #FirstContribution to CNCF projects #ContribCard #CNCF10";
+        </script>
+        <% } else { %>
+        <script>
         window.contributors = {{ contributors }};
-      </script>
-    <% } %>
-  </head>
-  <body>
-    <main class="d-flex flex-column align-items-center justify-content-center">
-      <div class="d-flex position-relative wrapper">
-        <div class="position-absolute decorator"></div>
-
-        <div class="d-flex flex-column overflow-auto w-100 bg-white content">
-          <div class="d-flex flex-column align-items-center mb-4 border-bottom header">
-            <div class="header-logo">
-              <img class="w-100" src="/images/k8s-logo.png" alt="Kubernetes logo">
+        window.email_subject = "{{ theme.email_subject }}";
+        window.social_message = "{{ theme.social_message }}";
+        </script>
+        <% } %>
+    </head>
+    <body>
+        <main class="d-flex flex-column align-items-center justify-content-center">
+            <div class="d-flex position-relative wrapper">
+                <div class="position-absolute decorator"></div>
+                <div class="d-flex flex-column overflow-auto w-100 bg-white content">
+                    <div class="d-flex flex-column align-items-center mb-4 border-bottom header">
+                        <div class="header-logo">
+                            <img class="w-100"
+                                 src="/images/{{ theme.logo_url|file_name }}"
+                                 alt="Kubernetes logo">
+                        </div>
+                        <div class="mb-2 fw-bold text-uppercase mainTitle">Contributor card</div>
+                    </div>
+                    <div class="d-flex flex-column flex-grow-1 mx-3 mx-md-5">
+                        <div id="root" class="d-flex flex-column flex-grow-1 position-relative"></div>
+                        <div class="pt-2 pt-md-3 mt-auto w-100 mx-auto">
+                            <img class="footer-image"
+                                 src="/images/phippy-family.png"
+                                 alt="Phippy Family">
+                        </div>
+                    </div>
+                </div>
+                <div class="powered-text">
+                    Powered by <a class="link"
+    href="https://github.com/cncf/contribcard"
+    target="_blank"
+    rel="noopener noreferrer">CNCF ContribCard</a>
+                </div>
             </div>
-            <div class="mb-2 fw-bold text-uppercase mainTitle">Contributor card</div>
-          </div>
-
-          <div class="d-flex flex-column flex-grow-1 mx-3 mx-md-5">
-            <div id="root" class="d-flex flex-column flex-grow-1 position-relative"></div>
-            <div class="pt-2 pt-md-3 mt-auto w-100 mx-auto">
-              <img class="footer-image" src="/images/phippy-family.png" alt="Phippy Family">
-            </div>
-          </div>
-        </div>
-        <div class="powered-text">Powered by <a class="link" href="https://github.com/cncf/contribcard" target="_blank"
-          rel="noopener noreferrer">CNCF ContribCard</a></div>
-      </div>
-    </main>
-    <script type="module" src="/src/index.tsx"></script>
-  </body>
+        </main>
+        <script type="module" src="/src/index.tsx"></script>
+    </body>
 </html>

@@ -9,10 +9,14 @@ use std::{
 
 use anyhow::{bail, Context, Result};
 use askama::Template;
+use reqwest::{StatusCode, Url};
 use rust_embed::RustEmbed;
 use tracing::{debug, info, instrument};
 
-use crate::{build::settings::Settings, BuildArgs};
+use crate::{
+    build::settings::{Settings, Theme},
+    BuildArgs,
+};
 
 mod db;
 mod github;
@@ -20,6 +24,9 @@ mod settings;
 
 /// Path where the data files will be written to in the output directory.
 const DATA_PATH: &str = "data";
+
+/// Path where some images will be written to in the output directory.
+const IMAGES_PATH: &str = "images";
 
 /// Embed web application assets into binary.
 /// (these assets will be built automatically from the build script)
@@ -51,13 +58,51 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     generate_contributors_data_files(&args.output_dir, &contribs_db)?;
 
     // Render index file and write it to the output directory
-    render_index(&args.output_dir, &contribs_db)?;
+    render_index(&settings.theme, &args.output_dir, &contribs_db)?;
+
+    // Download and copy theme images to the output directory
+    copy_theme_images(&settings.theme, &args.output_dir).await?;
 
     // Copy web assets files to the output directory
     copy_web_assets(&args.output_dir)?;
 
     let duration = start.elapsed().as_secs_f64();
     info!("contribcard website built! (took: {:.3}s)", duration);
+    Ok(())
+}
+
+/// Copy theme images to the output directory.
+#[instrument(skip(theme), err)]
+async fn copy_theme_images(theme: &Theme, output_dir: &Path) -> Result<()> {
+    // Helper function to download an image to the output directory
+    async fn download_image(url: &str, output_dir: &Path) -> Result<()> {
+        // Fetch image
+        let resp = reqwest::get(url).await.context(format!("error downloading image ({url})"))?;
+        if resp.status() != StatusCode::OK {
+            bail!(
+                "unexpected status ({}) code downloading image ({url})",
+                resp.status()
+            );
+        }
+        let img = resp.bytes().await?;
+
+        // Write image to output dir
+        let url = Url::parse(url).context("invalid image url")?;
+        let Some(file_name) = url.path_segments().and_then(Iterator::last) else {
+            bail!("invalid image url: {url}");
+        };
+        let img_path = Path::new(IMAGES_PATH).join(file_name);
+        File::create(output_dir.join(&img_path))?.write_all(&img)?;
+
+        Ok(())
+    }
+
+    debug!("copying theme images to output directory");
+
+    download_image(&theme.favicon_url, output_dir).await.context("favicon")?;
+    download_image(&theme.logo_url, output_dir).await.context("logo")?;
+    download_image(&theme.og_image_url, output_dir).await.context("og_image")?;
+
     Ok(())
 }
 
@@ -126,20 +171,21 @@ fn prepare_contributions_table(cache_db_file: &str) -> Result<duckdb::Connection
 /// Template for the index document.
 #[derive(Debug, Clone, Template)]
 #[template(path = "index.html", escape = "none")]
-struct Index {
+struct Index<'a> {
     contributors: String,
+    theme: &'a Theme,
 }
 
 /// Render index file and write it to the output directory.
 #[instrument(skip_all, err)]
-fn render_index(output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
+fn render_index(theme: &Theme, output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
     debug!("rendering index.html file");
 
     // Get contributors from cache database
     let contributors: String = contribs_db.query_row(db::GET_CONTRIBUTORS, [], |row| row.get(0))?;
 
     // Prepare index, render it and write it to output dir
-    let index = Index { contributors }.render()?;
+    let index = Index { contributors, theme }.render()?;
     File::create(output_dir.join("index.html"))?.write_all(index.as_bytes())?;
 
     Ok(())
@@ -219,9 +265,11 @@ fn setup_output_dir(output_dir: &Path) -> Result<()> {
         fs::create_dir_all(output_dir)?;
     }
 
-    let data_path = output_dir.join(DATA_PATH);
-    if !data_path.exists() {
-        fs::create_dir(data_path)?;
+    for path in &[DATA_PATH, IMAGES_PATH] {
+        let path = output_dir.join(path);
+        if !path.exists() {
+            fs::create_dir(path)?;
+        }
     }
 
     Ok(())
@@ -245,5 +293,21 @@ impl BaseCacheDB {
             username: args.base_cache_db_username.clone(),
             password: args.base_cache_db_password.clone(),
         })
+    }
+}
+
+mod filters {
+    use anyhow::anyhow;
+    use reqwest::Url;
+
+    /// Filter to get file name of the url provided.
+    pub(crate) fn file_name(url: &str, _: &dyn askama::Values) -> askama::Result<String> {
+        let url = Url::parse(url).map_err(|err| askama::Error::Custom(err.into()))?;
+        let file_name = url
+            .path_segments()
+            .ok_or(askama::Error::Custom(anyhow!("invalid url").into()))?
+            .next_back()
+            .ok_or(askama::Error::Custom(anyhow!("invalid url").into()))?;
+        Ok(file_name.to_string())
     }
 }

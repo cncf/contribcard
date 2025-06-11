@@ -108,9 +108,10 @@ const LinkIcon = (props: Props): JSXElement => {
   );
 };
 
-const MESSAGE = `Happy #kuberTENes! Check out my #FirstContribution to Kubernetes #ContribCard`;
-
 const ShareContributorLink = () => {
+  const EMAIL_SUBJECT = window.email_subject;
+  const MESSAGE = window.social_message;
+
   const [visibleButtons, setVisibleButtons] = createSignal<boolean>(false);
   const [copyStatus, setCopyStatus] = createSignal<boolean>(false);
   const [tooltipTimeout, setTooltipTimeout] = createSignal<number | null>(null);
@@ -140,7 +141,7 @@ const ShareContributorLink = () => {
         url += `?text=${encodeURIComponent(`${MESSAGE} ${urlToShare}`)}`;
         break;
       case LinkShare.Email:
-        url += `mailto:?subject=${encodeURIComponent('Happy #kuberTENes!')}&body=${encodeURIComponent(
+        url += `mailto:?subject=${encodeURIComponent(EMAIL_SUBJECT)}&body=${encodeURIComponent(
           `${MESSAGE} ${urlToShare}`
         )}`;
         break;
