@@ -61,7 +61,7 @@
 .miniAvatar {
   width: 34px;
   height: 34px;
-   margin: -2px;
+  margin: -2px;
   padding: 2px;
   font-size: 1.15rem;
   line-height: 25px;
@@ -134,7 +134,7 @@
     font-size: 1.25rem;
     line-height: 35px;
     text-align: center;
-}
+  }
 
   .spinner {
     width: 1.75rem;
@@ -178,7 +178,7 @@
     line-height: 45px;
     text-align: center;
     filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.6));
-}
+  }
 
   .spinner {
     width: 2rem;
