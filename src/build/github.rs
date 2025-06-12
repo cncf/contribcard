@@ -18,7 +18,7 @@ use reqwest::{
 };
 use serde_json::Value;
 use tempfile::NamedTempFile;
-use tracing::{debug, instrument, trace};
+use tracing::{debug, instrument, trace, warn};
 
 use crate::build::db;
 use crate::build::settings::Settings;
@@ -284,7 +284,7 @@ impl Collector {
             .expect("x-ratelimit-remaining header value to be an integer")
             <= MIN_RATELIMIT_REMAINING
         {
-            trace!("token is about to reach the rate limit, removing client from pool");
+            warn!("token is about to reach the rate limit, removing client from pool");
             let _ = Object::take(client);
         }
 
