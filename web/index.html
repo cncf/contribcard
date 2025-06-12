@@ -9,6 +9,7 @@
         <link rel="shortcut icon" href="/images/{{ favicon }}" />
         <link rel="apple-touch-icon" href="/images/{{ favicon }}" />
         <title>{{ theme.og_title }}</title>
+        <meta name="description" content="{{ theme.og_description }}" />
         <meta property="og:title" content="{{ theme.og_title }}" />
         <meta property="og:description" content="{{ theme.og_description }}" />
         <meta property="og:type" content="website" />
@@ -42,8 +43,8 @@
                 <div class="position-absolute decorator"></div>
                 <div class="d-flex flex-column overflow-auto w-100 bg-white content">
                     <div class="d-flex flex-column align-items-center mb-4 border-bottom header">
-                        <div class="header-logo">
-                            <img class="w-100"
+                        <div class="header-logo w-100 d-flex align-items-center">
+                            <img class="mw-100 mh-100 w-auto h-auto mx-auto"
                                  src="/images/{{ theme.logo_url|file_name }}"
                                  alt="Kubernetes logo">
                         </div>
