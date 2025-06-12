@@ -7,7 +7,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{bail, ensure, Result};
 use chrono::DateTime;
 use deadpool::unmanaged::{Object, Pool};
 use duckdb::{AccessMode, Config, OptionalExt};
@@ -82,21 +82,16 @@ impl Collector {
         }
 
         // Collect contributions from each repository
-        let errors_found: bool = stream::iter(repositories)
-            .map(|(owner, repo)| async move {
-                self.collect_commits(&owner, &repo).await.context("error collecting commits")?;
-                self.collect_issues_and_prs(&owner, &repo)
-                    .await
-                    .context("error collecting issues and pull requests")
+        stream::iter(repositories)
+            .for_each_concurrent(self.http_clients.status().size, |(owner, repo)| async move {
+                if let Err(err) = self.collect_commits(&owner, &repo).await {
+                    warn!("error collecting commits for repository ({owner}/{repo}): {err:?}");
+                }
+                if let Err(err) = self.collect_issues_and_prs(&owner, &repo).await {
+                    warn!("error collecting issues and prs for repository ({owner}/{repo}): {err:?}");
+                }
             })
-            .buffer_unordered(self.http_clients.status().size)
-            .collect::<Vec<Result<()>>>()
-            .await
-            .iter()
-            .any(Result::is_err);
-        if errors_found {
-            bail!("something went wrong, see errors above");
-        }
+            .await;
 
         debug!("done!");
         Ok(())
@@ -141,7 +136,7 @@ impl Collector {
     }
 
     /// Collect and cache all commits available since the last one processed.
-    #[instrument(skip(self), err)]
+    #[instrument(skip(self))]
     async fn collect_commits(&self, owner: &str, repo: &str) -> Result<()> {
         trace!(owner, repo, "collecting commits");
 
@@ -190,7 +185,7 @@ impl Collector {
 
     /// Collect and cache all issues and pull requests available since the last
     /// one processed.
-    #[instrument(skip(self), err)]
+    #[instrument(skip(self))]
     async fn collect_issues_and_prs(&self, owner: &str, repo: &str) -> Result<()> {
         trace!(owner, repo, "collecting issues and prs");
 
@@ -252,7 +247,7 @@ impl Collector {
 
     /// Fetch the page requested and return the response headers and a file
     /// with the body content (unless it's empty).
-    #[instrument(skip(self), err)]
+    #[instrument(skip(self))]
     async fn fetch_page(&self, url: &str) -> Result<(HeaderMap, Option<NamedTempFile>)> {
         trace!("fetching page: {url}");
 
