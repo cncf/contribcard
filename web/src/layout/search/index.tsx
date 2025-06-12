@@ -256,7 +256,7 @@ const Search = () => {
                         id={`card_${index()}`}
                       >
                         <div class="d-flex flex-row align-items-center">
-                          <div class={`me-4 text-muted avatar ${styles.miniAvatar}`}>
+                          <div class={`me-4 text-muted ${styles.miniAvatar}`}>
                             <Image contributorId={contributorsInfo()![c]} login={c} class="d-block w-100 h-100 mask" />
                           </div>
                           <div class={`fw-semibold text-truncate ${styles.displayName}`}>{c}</div>
