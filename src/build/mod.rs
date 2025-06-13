@@ -57,8 +57,11 @@ pub(crate) async fn build(args: &BuildArgs) -> Result<()> {
     // Generate contributors data files
     generate_contributors_data_files(&args.output_dir, &contribs_db)?;
 
+    // Generate all contributors data file
+    generate_all_contributors_data_file(&args.output_dir, &contribs_db)?;
+
     // Render index file and write it to the output directory
-    render_index(&settings.theme, &args.output_dir, &contribs_db)?;
+    render_index(&settings.theme, &args.output_dir)?;
 
     // Download and copy theme images to the output directory
     copy_theme_images(&settings.theme, &args.output_dir).await?;
@@ -154,6 +157,22 @@ fn generate_contributors_data_files(output_dir: &Path, contribs_db: &duckdb::Con
     Ok(())
 }
 
+/// Generate all contributors data file.
+#[instrument(skip_all, err)]
+fn generate_all_contributors_data_file(output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
+    debug!("generating all contributors data file");
+
+    // Get contributors from cache database
+    let contributors: String = contribs_db.query_row(db::GET_CONTRIBUTORS, [], |row| row.get(0))?;
+
+    // Write contributors data file to the output directory
+    let data_path = output_dir.join(DATA_PATH);
+    let mut file = File::create(data_path.join("_all_contributors.json"))?;
+    file.write_all(contributors.as_bytes())?;
+
+    Ok(())
+}
+
 /// Prepare contributions table from all the commits, issues and pull requests
 /// collected from GitHub available in the cache database.
 #[instrument(err)]
@@ -172,20 +191,16 @@ fn prepare_contributions_table(cache_db_file: &str) -> Result<duckdb::Connection
 #[derive(Debug, Clone, Template)]
 #[template(path = "index.html", escape = "none")]
 struct Index<'a> {
-    contributors: String,
     theme: &'a Theme,
 }
 
 /// Render index file and write it to the output directory.
 #[instrument(skip_all, err)]
-fn render_index(theme: &Theme, output_dir: &Path, contribs_db: &duckdb::Connection) -> Result<()> {
+fn render_index(theme: &Theme, output_dir: &Path) -> Result<()> {
     debug!("rendering index.html file");
 
-    // Get contributors from cache database
-    let contributors: String = contribs_db.query_row(db::GET_CONTRIBUTORS, [], |row| row.get(0))?;
-
     // Prepare index, render it and write it to output dir
-    let index = Index { contributors, theme }.render()?;
+    let index = Index { theme }.render()?;
     File::create(output_dir.join("index.html"))?.write_all(index.as_bytes())?;
 
     Ok(())

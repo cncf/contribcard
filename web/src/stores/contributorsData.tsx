@@ -1,14 +1,16 @@
 import { createContext, createSignal, onMount, ParentComponent, useContext } from 'solid-js';
 
+import API from '../api';
 import { UserInfo } from '../types';
 
 function useContributorsDataProvider() {
-  const [contributors, setContributors] = createSignal<string[] | null>();
+  const [contributors, setContributors] = createSignal<string[]>([]);
   const [contributorsInfo, setContributorsInfo] = createSignal<UserInfo | null>();
 
-  onMount(() => {
-    setContributors(Object.keys(window.contributors).sort(Intl.Collator().compare));
-    setContributorsInfo(window.contributors);
+  onMount(async () => {
+    const allContributors = await API.getAllContributors();
+    setContributors(Object.keys(allContributors).sort(Intl.Collator().compare));
+    setContributorsInfo(allContributors);
   });
 
   return {
