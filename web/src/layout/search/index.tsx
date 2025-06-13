@@ -219,18 +219,20 @@ const Search = () => {
             </Show>
           </div>
         </div>
-        <div class={styles.countingMessage}>
-          <Show
-            when={currentContributors().length > 0}
-            fallback={
-              <div class={`spinner-border me-2 ${styles.miniSearchingSpinner}`} role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-            }
-          >
-            <span class={`fw-bold ${styles.countingNumber}`}>{prettifyNumber(currentContributors().length, 1)}</span>
-          </Show>{' '}
-          contributors and counting!
+        <div class={`d-flex align-items-center justify-content-center ${styles.countingMessage}`}>
+          <div class={`fw-bold position-relative me-2 ${styles.countingNumber}`}>
+            <Show
+              when={currentContributors().length > 0}
+              fallback={
+                <div class={`pe-2 ${styles.dotsLoading}`} role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              }
+            >
+              {prettifyNumber(currentContributors().length, 1)}
+            </Show>
+          </div>
+          <div class={`text-truncate ${styles.countingText}`}>contributors and counting!</div>
         </div>
         <Show when={visibleDropdown() && visibleContributors() !== null}>
           <div

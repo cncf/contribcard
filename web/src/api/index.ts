@@ -36,9 +36,15 @@ class API_CLASS {
   }
 
   public async getAllContributors(): Promise<UserInfo> {
-    return this.apiFetch(
-      `${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}/` : this.BASE_PATH}/_all_contributors.json`
-    );
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(
+          this.apiFetch(
+            `${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}/` : this.BASE_PATH}/_all_contributors.json`
+          )
+        );
+      }, 5000);
+    });
   }
 
   public getContributorInfo(id: string): Promise<Contributor> {
