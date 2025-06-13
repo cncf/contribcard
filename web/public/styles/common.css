@@ -177,6 +177,18 @@ button:not(:disabled),
   width: 100% !important;
 }
 
+.mw-100 {
+  max-width: 100% !important;
+}
+
+.h-100 {
+  height: 100% !important;
+}
+
+.mh-100 {
+  max-height: 100% !important;
+}
+
 .lh-1 {
   line-height: 1 !important;
 }
@@ -440,7 +452,7 @@ select:focus {
 }
 
 .header-logo {
-  width: 160px;
+  height: 32px;
   margin: 0.6rem 0;
 }
 
@@ -456,8 +468,10 @@ select:focus {
 }
 
 .avatar {
-  height: 50px;
-  width: 50px;
+  height: 54px;
+  width: 54px;
+  margin: -2px;
+  padding: 2px;
   font-size: 1.75rem;
   line-height: 45px;
   text-align: center;
@@ -560,17 +574,16 @@ select:focus {
   }
 
   .header-logo {
-    width: 180px;
+    height: 40px;
     margin: 0.8rem 0;
   }
 
   .avatar {
-    height: 70px;
-    width: 70px;
+    height: 74px;
+    width: 74px;
     font-size: 2rem;
     line-height: 65px;
     text-align: center;
-    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.6));
 }
 
   .mainTitle {
@@ -652,16 +665,19 @@ select:focus {
   }
 
   .header-logo {
-    width: 210px;
+    height: 49px;
     margin: 1rem 0;
   }
 
   .avatar {
-    height: 80px;
-    width: 80px;
+    height: 86px;
+    width: 86px;
+    margin: -3px;
+    padding: 3px;
     font-size: 2.5rem;
     line-height: 75px;
     text-align: center;
+    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.6));
   }
 
   .mainTitle {
