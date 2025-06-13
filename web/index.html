@@ -23,9 +23,6 @@
               content="{{ theme.base_url }}/images/{{ og_image }}" />
         <% if (isDev) { %>
         <script>
-        fetch("/static/list/contributors.json")
-        .then(res => res.json())
-        .then(data => window.contributors = data);
         window.email_subject = "Happy #cTENcf!";
         window.social_message = "Happy #cTENcf! Check out my #FirstContribution to CNCF projects #ContribCard #CNCF10";
         </script>

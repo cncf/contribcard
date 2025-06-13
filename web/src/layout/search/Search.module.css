@@ -25,6 +25,7 @@
 .countingMessage {
   margin-top: 2rem;
   text-align: center;
+  height: 27px;
 }
 
 .countingNumber {
@@ -91,13 +92,19 @@
 
 .searchingWrapper {
   right: 0.75rem;
-  top: 1rem;
+  top: 0.5rem;
 }
 
 .searchingSpinner {
   width: 1.25rem;
   height: 1.25rem;
   border-width: 0.25em;
+}
+
+.miniSearchingSpinner {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
 }
 
 @media (hover: hover) {
@@ -122,6 +129,7 @@
   .countingMessage {
     font-size: 1.15rem;
     margin-top: 2.5rem;
+    height: 30px;
   }
 
   .dropdown {
