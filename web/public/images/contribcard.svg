@@ -55,9 +55,17 @@ xmlns="http://www.w3.org/2000/svg">
       font-size: 14px;
     }
 
-    .list {
+    .badge-text {
       fill: #383838;
-      font-size: 13px;
+      font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .more-text {
+      fill: #383838;
+      font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size: 12px;
       font-weight: 600;
     }
 
@@ -255,7 +263,7 @@ xmlns="http://www.w3.org/2000/svg">
     <!-- End title -->
 
     <g transform="translate(0 10)">
-      <rect x="0" y="0" width="368" height="85" stroke="#BFBFBF" />
+      <rect x="0" y="0" width="366" height="84" stroke="#BFBFBF" />
 
       <!-- Icon -->
       <g transform="translate(14 15)">
@@ -267,7 +275,7 @@ xmlns="http://www.w3.org/2000/svg">
       <g transform="translate(35 10)">
         <text x="0" y="15" class="repo">kubernetes/website</text>
         <text x="0" y="37" class="description">Show how to access the deployed service</text>
-        <text x="0" y="61" class="legend">Apr 20, 2016</text>
+        <text x="0" y="57" class="legend">Apr 20, 2016</text>
       </g>
       <!-- End content -->
     </g>
@@ -275,25 +283,78 @@ xmlns="http://www.w3.org/2000/svg">
   <!-- End first contribution -->
 
   <!-- Years contibuting -->
-  <g transform="translate(24 404)">
+  <g transform="translate(24 400)">
     <!-- Title -->
     <text x="0" y="0" class="legend">YEARS CONTRIBUTING (10)</text>
     <!-- End title -->
 
     <!-- Years -->
-    <text x="0" y="25" class="list">2024  ·  2023  ·  2022  ·  2021  ·  2020  ·  2019  ·  2018  ·  2017  ·  2...</text>
+    <g transform="translate(0 11)">
+      <g transform="translate(0 0)">
+        <rect x="0" y="0" width="40" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">2025</text>
+      </g>
+
+      <g transform="translate(50 0)">
+        <rect x="0" y="0" width="40" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">2024</text>
+      </g>
+
+      <g transform="translate(100 0)">
+        <rect x="0" y="0" width="40" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">2023</text>
+      </g>
+
+      <g transform="translate(150 0)">
+        <rect x="0" y="0" width="40" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">2022</text>
+      </g>
+
+      <g transform="translate(200 0)">
+        <rect x="0" y="0" width="40" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">2021</text>
+      </g>
+
+      <g transform="translate(250 0)">
+        <rect x="0" y="0" width="40" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">2020</text>
+      </g>
+
+      <g transform="translate(300 0)">
+        <text class="more-text" x="6" y="13">+10</text>
+      </g>
+    </g>
     <!-- End years -->
   </g>
   <!-- End years contributing -->
 
   <!-- Repositories -->
-  <g transform="translate(24 480)">
+  <g transform="translate(24 466)">
     <!-- Title -->
     <text x="0" y="0" class="legend">REPOSITORIES (124)</text>
     <!-- End title -->
 
     <!-- Repositories list -->
-    <text x="0" y="25" class="list">kubernetes  ·  test-infra  ·  provider-aws-test-infra  ·  docum...</text>
+    <g transform="translate(0 11)">
+      <g transform="translate(0 0)">
+        <rect x="0" y="0" width="82" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">kubernetes</text>
+      </g>
+
+      <g transform="translate(92 0)">
+        <rect x="0" y="0" width="82" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">test-infra</text>
+      </g>
+
+      <g transform="translate(184 0)">
+        <rect x="0" y="0" width="61" height="17" stroke="#6c757d"/>
+        <text class="badge-text" x="6" y="13">kubeadm</text>
+      </g>
+
+      <g transform="translate(255 0)">
+        <text class="more-text" x="6" y="13">+114</text>
+      </g>
+    </g>
     <!-- End repositories list -->
   </g>
   <!-- End repositories -->
@@ -302,7 +363,7 @@ xmlns="http://www.w3.org/2000/svg">
   <g transform="translate(103 525)">
     <g transform="translate(0 0)">
       <rect width="210" height="18" x="0" y="0" rx="9" fill="black" fill-opacity="0.1" />
-      <text x="5" y="13" class="thanks">Thank you for your contributions!</text>
+      <text x="12" y="13" class="thanks">Thank you for your contributions!</text>
     </g>
   </g>
   <!-- End Thanks message -->
