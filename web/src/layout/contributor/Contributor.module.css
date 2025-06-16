@@ -129,6 +129,7 @@
   font-size: 90%;
   line-height: 90%;
   margin-right: 0.5rem;
+  min-width: 12px;
 }
 
 .blueBtn {
@@ -302,7 +303,7 @@
   }
 
   .badgeIcon {
-    min-width: 14px;
+    min-width: 15px;
   }
 }
 

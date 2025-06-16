@@ -1,4 +1,4 @@
-import { Contributor } from '../types';
+import { Contributor, UserInfo } from '../types';
 
 class API_CLASS {
   private BASE_PATH = '/data';
@@ -33,6 +33,12 @@ class API_CLASS {
       .then(this.handleErrors)
       .then((res) => this.handleContent(res))
       .catch((error) => Promise.reject(error));
+  }
+
+  public async getAllContributors(): Promise<UserInfo> {
+    return this.apiFetch(
+      `${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}/` : this.BASE_PATH}/_all_contributors.json`
+    );
   }
 
   public getContributorInfo(id: string): Promise<Contributor> {

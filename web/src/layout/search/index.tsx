@@ -140,6 +140,9 @@ const Search = () => {
 
   createEffect(
     on(value, () => {
+      // Do not search if there are no contributors
+      if (currentContributors().length === 0) return;
+
       const isInputFocused = inputEl() === document.activeElement;
       if (isInputFocused) {
         if (value().length >= MIN_CHARACTERS_SEARCH) {
@@ -166,7 +169,7 @@ const Search = () => {
 
   onMount(() => {
     updateMetaTags();
-    setVisibleContributors(currentContributors()!);
+    setVisibleContributors(currentContributors());
   });
 
   return (
@@ -216,12 +219,21 @@ const Search = () => {
             </Show>
           </div>
         </div>
-        <Show when={currentContributors()}>
-          <div class={styles.countingMessage}>
-            <span class={`fw-bold ${styles.countingNumber}`}>{prettifyNumber(currentContributors()!.length, 1)}</span>{' '}
-            contributors and counting!
+        <div class={`d-flex align-items-center justify-content-center ${styles.countingMessage}`}>
+          <div class={`fw-bold position-relative me-2 ${styles.countingNumber}`}>
+            <Show
+              when={currentContributors().length > 0}
+              fallback={
+                <div class={`pe-2 ${styles.dotsLoading}`} role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              }
+            >
+              {prettifyNumber(currentContributors().length, 1)}
+            </Show>
           </div>
-        </Show>
+          <div class={`text-truncate ${styles.countingText}`}>contributors and counting!</div>
+        </div>
         <Show when={visibleDropdown() && visibleContributors() !== null}>
           <div
             ref={setDropdownRef}
