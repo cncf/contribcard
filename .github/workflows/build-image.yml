@@ -10,6 +10,9 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on:
       labels: ubuntu-latest-8-cores
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
