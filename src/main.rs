@@ -125,10 +125,9 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     // Setup logging
-    if std::env::var_os("RUST_LOG").is_none() {
-        std::env::set_var("RUST_LOG", "contribcard=debug");
-    }
-    tracing_subscriber::fmt::init();
+    let env_filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("contribcard=debug"));
+    tracing_subscriber::fmt().with_env_filter(env_filter).init();
 
     // Run command
     match &cli.command {

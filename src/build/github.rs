@@ -7,14 +7,14 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use anyhow::{bail, ensure, Result};
+use anyhow::{Result, bail, ensure};
 use chrono::DateTime;
 use deadpool::unmanaged::{Object, Pool};
 use duckdb::{AccessMode, Config, OptionalExt};
 use futures::stream::{self, StreamExt};
 use reqwest::{
-    header::{self, HeaderMap},
     StatusCode,
+    header::{self, HeaderMap},
 };
 use serde_json::Value;
 use tempfile::NamedTempFile;
