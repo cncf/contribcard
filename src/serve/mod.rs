@@ -3,7 +3,7 @@
 use std::{env, net::SocketAddr};
 
 use anyhow::Result;
-use axum::{routing::get_service, Router};
+use axum::{Router, routing::get_service};
 use tokio::{net::TcpListener, signal};
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::{info, instrument};

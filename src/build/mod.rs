@@ -7,15 +7,15 @@ use std::{
     time::Instant,
 };
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use askama::Template;
 use reqwest::{StatusCode, Url};
 use rust_embed::RustEmbed;
 use tracing::{debug, info, instrument};
 
 use crate::{
-    build::settings::{Settings, Theme},
     BuildArgs,
+    build::settings::{Settings, Theme},
 };
 
 mod db;
