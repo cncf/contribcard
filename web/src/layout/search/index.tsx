@@ -1,7 +1,11 @@
 import { useNavigate } from '@solidjs/router';
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from 'solid-js';
 
-import { useContributorsDataInfo, useContributorsDataList } from '../../stores/contributorsData';
+import {
+  useContributorsDataInfo,
+  useContributorsDataList,
+  useContributorsDataLoader,
+} from '../../stores/contributorsData';
 import prettifyNumber from '../../utils/prettifyNumber';
 import updateMetaTags from '../../utils/updateMetaTags';
 import HoverableItem from '../common/HoverableItem';
@@ -16,6 +20,7 @@ const Search = () => {
   const navigate = useNavigate();
   const currentContributors = useContributorsDataList();
   const contributorsInfo = useContributorsDataInfo();
+  const loadContributors = useContributorsDataLoader();
   const [inputEl, setInputEl] = createSignal<HTMLInputElement>();
   const [dropdownRef, setDropdownRef] = createSignal<HTMLInputElement>();
   const [value, setValue] = createSignal<string>('');
@@ -161,6 +166,14 @@ const Search = () => {
     })
   );
 
+  createEffect(
+    on(currentContributors, () => {
+      if (value() === '') {
+        setVisibleContributors(currentContributors());
+      }
+    })
+  );
+
   onCleanup(() => {
     if (dropdownTimeout() !== null) {
       clearTimeout(dropdownTimeout()!);
@@ -170,6 +183,7 @@ const Search = () => {
   onMount(() => {
     updateMetaTags();
     setVisibleContributors(currentContributors());
+    void loadContributors();
   });
 
   return (

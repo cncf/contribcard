@@ -1,4 +1,4 @@
-import { createContext, createSignal, onMount, ParentComponent, useContext } from 'solid-js';
+import { createContext, createSignal, ParentComponent, useContext } from 'solid-js';
 
 import API from '../api';
 import { UserInfo } from '../types';
@@ -6,16 +6,26 @@ import { UserInfo } from '../types';
 function useContributorsDataProvider() {
   const [contributors, setContributors] = createSignal<string[]>([]);
   const [contributorsInfo, setContributorsInfo] = createSignal<UserInfo | null>();
+  let loading = false;
 
-  onMount(async () => {
-    const allContributors = await API.getAllContributors();
-    setContributors(Object.keys(allContributors).sort(Intl.Collator().compare));
-    setContributorsInfo(allContributors);
-  });
+  const loadContributors = async () => {
+    if (contributorsInfo() || loading) {
+      return;
+    }
+    loading = true;
+    try {
+      const allContributors = await API.getAllContributors();
+      setContributors(Object.keys(allContributors).sort(Intl.Collator().compare));
+      setContributorsInfo(allContributors);
+    } finally {
+      loading = false;
+    }
+  };
 
   return {
     contributors: contributors,
     contributorsInfo: contributorsInfo,
+    loadContributors: loadContributors,
   };
 }
 
@@ -42,4 +52,8 @@ export function useContributorsDataList() {
 
 export function useContributorsDataInfo() {
   return useContributorsData().contributorsInfo;
+}
+
+export function useContributorsDataLoader() {
+  return useContributorsData().loadContributors;
 }
