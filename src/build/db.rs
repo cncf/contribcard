@@ -135,6 +135,19 @@ SELECT
             FROM contribution
             WHERE author_id = contributor.author_id
         ),
+        'first_commit', (
+            SELECT json_object(
+                'owner', owner,
+                'repository', repository,
+                'sha', sha,
+                'ts', extract('epoch' FROM ts)::BIGINT
+            ) FROM contribution
+            WHERE author_id = contributor.author_id
+            AND kind = 'commit'
+            AND sha IS NOT NULL
+            ORDER BY ts ASC, owner ASC, repository ASC, sha ASC
+            LIMIT 1
+        ),
         'first_contribution', (
             SELECT json_object(
                 'kind', kind,
