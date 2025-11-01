@@ -12,11 +12,11 @@ authors = ["Sergio Castaño Arteaga", "Cintia Sanchez Garcia"]
 [dependencies]
 anyhow = "1.0.100"
 askama = { version = "0.14.0", features = ["serde_json"] }
-aws-config = "1.8.8"
-aws-sdk-s3 = "1.108.0"
+aws-config = "1.8.10"
+aws-sdk-s3 = "1.110.0"
 axum = "0.8.6"
 chrono = "0.4.42"
-clap = { version = "4.5.49", features = ["derive"] }
+clap = { version = "4.5.51", features = ["derive"] }
 deadpool = "0.12.3"
 dirs = "6.0.0"
 duckdb = { version = "1.4.1", features = ["json"] }
@@ -25,7 +25,7 @@ md-5 = "0.10.6"
 mime_guess = "2.0.5"
 parse_link_header = "0.4.0"
 reqwest = { version = "0.12.24", features = ["json"] }
-rust-embed = "8.7.2"
+rust-embed = "8.8.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 serde_yaml = "0.9.34-deprecated"
