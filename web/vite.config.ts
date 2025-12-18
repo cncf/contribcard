@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   // Check if we should proxy to production (for UI-only development)
-  const useProductionProxy = env.VITE_PROXY_TARGET !== undefined;
+  const useProductionProxy = !!env.VITE_PROXY_TARGET;
   const proxyTarget = env.VITE_PROXY_TARGET || 'https://contribcard.cncf.io';
 
   return {
