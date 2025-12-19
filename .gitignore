@@ -7,3 +7,4 @@ yarn-error.log*
 /web/dist
 /web/node_modules
 /web/static/*
+/web/.env.local
