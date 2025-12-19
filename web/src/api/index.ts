@@ -37,13 +37,13 @@ class API_CLASS {
 
   public async getAllContributors(): Promise<UserInfo> {
     return this.apiFetch(
-      `${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}/` : this.BASE_PATH}/_all_contributors.json`
+      `${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}` : this.BASE_PATH}/_all_contributors.json`
     );
   }
 
   public getContributorInfo(id: string): Promise<Contributor> {
     return this.apiFetch(
-      `${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}/` : this.BASE_PATH}/${id}.json`
+      `${import.meta.env.MODE === 'development' ? `/static${this.BASE_PATH}` : this.BASE_PATH}/${id}.json`
     );
   }
 }
