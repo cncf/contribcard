@@ -208,25 +208,19 @@ fn render_index(theme: &Theme, output_dir: &Path) -> Result<()> {
 
 /// Setup cache database.
 #[instrument(skip(base_db), err)]
-pub(crate) async fn setup_cache_db(
-    cache_dir: &Path,
-    name: &str,
-    base_db: Option<&BaseCacheDB>,
-) -> Result<String> {
+async fn setup_cache_db(cache_dir: &Path, name: &str, base_db: Option<&BaseCacheDB>) -> Result<String> {
     debug!("setting up cache database");
 
     // If there isn't a cache database yet, use the base one (if provided)
     let path = cache_dir.join(format!("{name}.db"));
-    if !path.exists() && base_db.is_some() {
+    if !path.exists()
+        && let Some(base_db) = base_db
+    {
         // Download base cache database
-        let base_db = base_db.as_ref().expect("base db to be present");
         debug!("fetching base cache database");
         let mut request = reqwest::Client::new().get(&base_db.url);
-        if base_db.username.is_some() {
-            request = request.basic_auth(
-                base_db.username.as_ref().expect("username to be present"),
-                base_db.password.as_ref(),
-            );
+        if let Some(username) = base_db.username.as_ref() {
+            request = request.basic_auth(username, base_db.password.as_ref());
         }
         let response = request.send().await.context("error fetching base cache db")?;
         if response.status() != reqwest::StatusCode::OK {
@@ -311,11 +305,13 @@ impl BaseCacheDB {
     }
 }
 
+#[allow(clippy::inline_always, clippy::unused_self)]
 mod filters {
     use anyhow::anyhow;
     use reqwest::Url;
 
     /// Filter to get file name of the url provided.
+    #[askama::filter_fn]
     pub(crate) fn file_name(url: &str, _: &dyn askama::Values) -> askama::Result<String> {
         let url = Url::parse(url).map_err(|err| askama::Error::Custom(err.into()))?;
         let file_name = url
