@@ -45,7 +45,7 @@ pub(crate) struct Collector {
 
 impl Collector {
     /// Create a new Collector instance.
-    pub(crate) fn new(cache_db_file: &String) -> Result<Self> {
+    pub(crate) fn new(cache_db_file: &str) -> Result<Self> {
         // Setup GitHub tokens
         let Ok(tokens) = env::var("GITHUB_TOKENS") else {
             bail!("required GITHUB_TOKENS not provided");
@@ -53,7 +53,7 @@ impl Collector {
         let tokens: Vec<String> = tokens.split(',').map(ToString::to_string).collect();
 
         Ok(Self {
-            cache_db_file: cache_db_file.to_string(),
+            cache_db_file: cache_db_file.to_owned(),
             cache_lock: Arc::new(Mutex::new(())),
             http_clients: Pool::from(
                 tokens.iter().map(|token| Self::new_http_client(token)).collect::<Vec<reqwest::Client>>(),
