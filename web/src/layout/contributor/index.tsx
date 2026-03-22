@@ -3,8 +3,10 @@ import { createSignal, JSXElement, Match, onCleanup, onMount, Show, Switch } fro
 
 import API from '../../api';
 import clotributor from '../../assets/clotributor.png';
+import { useContributorsDataInfo } from '../../stores/contributorsData';
 import { ContributionKind, Contributor } from '../../types';
 import prettifyNumber from '../../utils/prettifyNumber';
+import resolveContributorId from '../../utils/resolveContributorId';
 import updateMetaTags from '../../utils/updateMetaTags';
 import ExternalLink from '../common/ExternalLink';
 import Image from '../common/Image';
@@ -63,7 +65,10 @@ const ContributionKindIcon = (props: Props): JSXElement => {
 const ContributorCard = () => {
   const location = useLocation();
   const params = useParams();
+  const contributorsInfo = useContributorsDataInfo();
   const [contributor, setContributor] = createSignal<Contributor | null | undefined>();
+
+  const resolveId = (id: string): string => resolveContributorId(id, contributorsInfo());
 
   const getFirstContributionLink = () => {
     let url = `https://github.com/${contributor()!.first_contribution.owner}/${
@@ -96,7 +101,7 @@ const ContributorCard = () => {
 
   onMount(() => {
     if (contributor() === undefined) {
-      fecthContributorInfo(params.id);
+      fecthContributorInfo(resolveId(params.id));
     }
     updateMetaTags(`${window.location.origin}${location.pathname}`);
   });

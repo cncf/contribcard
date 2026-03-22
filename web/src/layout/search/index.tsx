@@ -7,6 +7,7 @@ import {
   useContributorsDataLoader,
 } from '../../stores/contributorsData';
 import prettifyNumber from '../../utils/prettifyNumber';
+import resolveContributorId from '../../utils/resolveContributorId';
 import updateMetaTags from '../../utils/updateMetaTags';
 import HoverableItem from '../common/HoverableItem';
 import Image from '../common/Image';
@@ -108,7 +109,7 @@ const Search = () => {
     cleanItemsSearch();
     setValue('');
     forceBlur();
-    navigate(`/${contributorId}`, {
+    navigate(`/${resolveContributorId(contributorId, contributorsInfo())}`, {
       replace: false,
       scroll: true, // default
     });
