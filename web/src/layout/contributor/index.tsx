@@ -96,7 +96,11 @@ const ContributorCard = () => {
 
   onMount(() => {
     if (contributor() === undefined) {
-      fecthContributorInfo(params.id);
+      if (params.id) {
+        fecthContributorInfo(params.id);
+      } else {
+        setContributor(null);
+      }
     }
     updateMetaTags(`${window.location.origin}${location.pathname}`);
   });
