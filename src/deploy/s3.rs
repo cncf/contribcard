@@ -235,5 +235,10 @@ fn md5sum(path: &Path) -> Result<String> {
     hasher.update(fs::read(path)?);
     let result = hasher.finalize();
 
-    Ok(format!("{result:x}"))
+    let mut checksum = String::with_capacity(result.len() * 2);
+    for byte in result {
+        write!(&mut checksum, "{byte:02x}").expect("writing to a String cannot fail");
+    }
+
+    Ok(checksum)
 }
