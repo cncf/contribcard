@@ -156,7 +156,7 @@ async fn upload_objects(
             let body = ByteStream::from_path(file).await?;
             let content_type = mime_guess::from_path(&key)
                 .first()
-                .ok_or(format_err!("cannot detect content type of key: {})", &key))?;
+                .ok_or(format_err!("cannot detect content type of key: {key})"))?;
 
             // Upload file
             s3_client

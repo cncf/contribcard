@@ -176,7 +176,7 @@ impl Collector {
 
         // Copy commits collected from temporary database to cache database
         let _cache_guard = self.cache_lock.lock().unwrap();
-        tmp_db.execute(&format!("attach '{}' as cache;", &self.cache_db_file), [])?;
+        tmp_db.execute(&format!("attach '{}' as cache;", self.cache_db_file), [])?;
         tmp_db.execute(db::COPY_COMMITS_TO_CACHE, [])?;
 
         trace!(owner, repo, "done!");
@@ -237,7 +237,7 @@ impl Collector {
         // Copy issues and pull requests collected from temporary database to
         // the cache database
         let _cache_guard = self.cache_lock.lock().unwrap();
-        tmp_db.execute(&format!("attach '{}' as cache;", &self.cache_db_file), [])?;
+        tmp_db.execute(&format!("attach '{}' as cache;", self.cache_db_file), [])?;
         tmp_db.execute(db::COPY_ISSUES_TO_CACHE, [])?;
         tmp_db.execute(db::COPY_PULL_REQUESTS_TO_CACHE, [])?;
 
