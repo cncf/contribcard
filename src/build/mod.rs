@@ -180,7 +180,7 @@ fn prepare_contributions_table(cache_db_file: &str) -> Result<duckdb::Connection
     debug!("preparing contributions table");
 
     let contribs_db = duckdb::Connection::open_in_memory()?;
-    contribs_db.execute(&format!("attach '{}' as cache;", &cache_db_file), [])?;
+    contribs_db.execute(&format!("attach '{cache_db_file}' as cache;"), [])?;
     contribs_db.execute(db::CREATE_CONTRIBUTION_TABLE, [])?;
     contribs_db.execute_batch(db::LOAD_CONTRIBUTIONS_FROM_CACHE)?;
 
